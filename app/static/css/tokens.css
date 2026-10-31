@@ -80,6 +80,8 @@
   --size-table-max: 70dvh;
   --size-border: 1px;
   --size-border-strong: 2px;
+  --size-accent-bar: 3px;
+  --size-card-hover-lift: 2px;
   --size-focus-ring: 2px;
   --size-focus-halo: 4px;
   --size-focus-offset: 2px;

@@ -38,15 +38,79 @@
 /* Group card */
 .group-card {
   position: relative;
+  padding: var(--space-4);
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
   cursor: pointer;
-  transition: border-color var(--duration-fast) var(--ease);
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
+}
+
+.group-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: var(--size-accent-bar);
+  background: var(--color-primary-soft-strong);
+  transition: background-color var(--duration-fast) var(--ease);
 }
 
 .group-card:hover {
   border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(calc(var(--size-card-hover-lift) * -1));
+}
+
+.group-card:hover::before {
+  background: var(--color-primary);
+}
+
+.group-card__header {
+  align-items: center;
+}
+
+.group-card__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.group-card__icon {
+  display: grid;
+  place-items: center;
+  width: var(--size-tap);
+  height: var(--size-tap);
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  color: var(--color-link);
+}
+
+.group-card__title-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.group-card__title {
+  font-size: var(--font-size-title-card);
+  font-weight: var(--font-weight-semibold);
 }
 
 .group-card__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--size-tap);
+  border-radius: var(--radius-sm);
   color: var(--color-text);
   text-decoration: none;
 }
@@ -54,6 +118,45 @@
 .group-card__link:hover {
   color: var(--color-link);
   text-decoration: none;
+}
+
+.group-card__link:focus-visible {
+  outline: var(--size-focus-ring) solid var(--color-focus-ring);
+  outline-offset: var(--size-focus-offset);
+  box-shadow: 0 0 0 calc(var(--size-focus-offset) + var(--size-focus-halo)) var(--color-focus-halo);
+}
+
+.group-card__course-badge {
+  background: var(--color-primary-soft-strong);
+  color: var(--color-link);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-small);
+}
+
+.group-card__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.group-card__footer {
+  padding-top: var(--space-3);
+  border-top: var(--size-border) solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+@media (min-width: 1024px) {
+  .group-card {
+    padding: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group-card:hover {
+    transform: none;
+  }
 }
 
 /* Upload dropzone */

@@ -15,9 +15,9 @@ const emptyAllEl = document.querySelector("[data-empty-all]");
 let allGroups = [];
 let selectedCourse = null;
 
-function buildIcon(name) {
+function buildIcon(name, extraClass = "") {
   const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("class", "icon");
+  svg.setAttribute("class", extraClass ? `icon ${extraClass}` : "icon");
   svg.setAttribute("aria-hidden", "true");
   svg.setAttribute("focusable", "false");
   const use = document.createElementNS(SVG_NS, "use");
@@ -226,16 +226,33 @@ function buildGroupCard(group) {
   article.dataset.groupId = String(group.id);
 
   const header = document.createElement("div");
-  header.className = "card__header";
+  header.className = "card__header group-card__header";
+
+  const identity = document.createElement("div");
+  identity.className = "group-card__identity";
+
+  const iconBox = document.createElement("span");
+  iconBox.className = "group-card__icon";
+  iconBox.append(buildIcon("groups"));
+
+  const titleWrap = document.createElement("div");
+  titleWrap.className = "group-card__title-wrap";
 
   const title = document.createElement("h3");
-  title.className = "card__title";
+  title.className = "card__title group-card__title";
 
   const link = document.createElement("a");
   link.className = "group-card__link";
   link.href = `/groups/${group.id}`;
   link.textContent = group.number;
   title.append(link);
+
+  const courseBadge = document.createElement("span");
+  courseBadge.className = "badge group-card__course-badge";
+  courseBadge.textContent = t("groups.card.course", { n: group.course });
+
+  titleWrap.append(title, courseBadge);
+  identity.append(iconBox, titleWrap);
 
   const menuWrap = document.createElement("div");
   menuWrap.className = "menu-wrap";
@@ -315,24 +332,25 @@ function buildGroupCard(group) {
 
   menu.append(renameBtn, editLink, sep, deleteBtn);
   menuWrap.append(toggleBtn, menu);
-  header.append(title, menuWrap);
+  header.append(identity, menuWrap);
 
-  const meta = document.createElement("div");
-  meta.className = "card__meta";
+  const body = document.createElement("div");
+  body.className = "group-card__body";
 
-  const courseMeta = document.createElement("span");
-  courseMeta.textContent = t("groups.card.course", { n: group.course });
+  const studentsText = document.createElement("span");
+  studentsText.textContent = tp("students_count", group.students_count);
+  body.append(buildIcon("profile", "icon--sm"), studentsText);
 
-  const studentsMeta = document.createElement("span");
-  studentsMeta.textContent = tp("students_count", group.students_count);
+  const footer = document.createElement("div");
+  footer.className = "group-card__footer";
 
   const dateMeta = document.createElement("span");
   dateMeta.textContent = t("groups.card.modified", {
     date: formatDate(group.updated_at),
   });
+  footer.append(dateMeta);
 
-  meta.append(courseMeta, studentsMeta, dateMeta);
-  article.append(header, meta);
+  article.append(header, body, footer);
 
   article.addEventListener("click", (event) => {
     if (
