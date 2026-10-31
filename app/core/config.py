@@ -1,0 +1,42 @@
+from typing import Any, Literal
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    DATABASE_URL: str = "postgresql+asyncpg://localhost:5432/furuzon"
+    TEST_DATABASE_URL: str = "postgresql+asyncpg://localhost:5432/furuzon_test"
+    SECRET_KEY: str = "dev-secret-key-change-in-production"
+    COOKIE_SECURE: bool = False
+    SESSION_MAX_AGE_DAYS: int = 30
+    PUBLIC_BASE_URL: str = "http://localhost:8000"
+
+    STORAGE_BACKEND: Literal["local", "supabase"] = "local"
+    UPLOADS_DIR: str = "uploads"
+    SUPABASE_URL: str = ""
+    SUPABASE_SERVICE_KEY: str = ""
+    SUPABASE_BUCKET: str = ""
+
+    MAIL_BACKEND: Literal["console", "smtp"] = "console"
+    SMTP_HOST: str = "localhost"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "noreply@furuzon.local"
+
+    @field_validator("SMTP_PORT", mode="before")
+    @classmethod
+    def parse_empty_port(cls, value: Any) -> Any:
+        if value == "" or value is None:
+            return 587
+        return value
+
+
+settings = Settings()
