@@ -217,5 +217,29 @@
   "groups.upload.number_label": "Номер группы",
   "groups.upload.course_label": "Курс",
   "groups.upload.submit": "Сохранить",
-  "groups.upload.created_toast": "Группа сохранена"
+  "groups.upload.created_toast": "Группа сохранена",
+
+  "error_page.404.title": "Страница не найдена",
+  "error_page.404.text": "Запрашиваемая страница не существует или недоступна.",
+  "error_page.404.back_to_groups": "К списку групп",
+
+  "groups.detail.back": "К списку групп",
+  "groups.detail.add_student": "Добавить студента",
+  "groups.detail.columns_btn": "Колонки",
+  "groups.detail.search_placeholder": "Поиск по студентам…",
+  "groups.detail.search_clear": "Очистить поиск",
+  "groups.detail.search_empty": "Ничего не найдено",
+  "groups.detail.empty_text": "В этой группе пока нет студентов",
+  "groups.detail.empty_cell": "—",
+
+  "groups.student_add.title": "Добавить студента",
+  "groups.student_add.success": "Студент добавлен",
+
+  "groups.student_delete.title": "Удалить студента?",
+  "groups.student_delete.text": "Студент исчезнет из группы и из всех листов сдачи. Действие нельзя отменить.",
+  "groups.student_delete.success": "Студент удалён",
+
+  "groups.columns_modal.title": "Колонки таблицы",
+  "groups.columns_modal.last_col_hint": "Нельзя убрать единственную оставшуюся колонку.",
+  "groups.columns_modal.removed_toast": "Колонка удалена"
 }

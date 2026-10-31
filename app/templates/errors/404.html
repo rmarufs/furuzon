@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon %}
+
+{% block title %}{{ t('error_page.404.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block content %}
+<div class="card empty">
+  <span class="empty__icon">{{ icon('alert', 'icon--lg') }}</span>
+  <h1>{{ t('error_page.404.title') }}</h1>
+  <p class="text-muted">{{ t('error_page.404.text') }}</p>
+  <a class="btn btn--primary" href="/groups">{{ t('error_page.404.back_to_groups') }}</a>
+</div>
+{% endblock %}

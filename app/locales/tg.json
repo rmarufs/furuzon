@@ -214,5 +214,29 @@
   "groups.upload.number_label": "Рақами гурӯҳ",
   "groups.upload.course_label": "Курс",
   "groups.upload.submit": "Захира кардан",
-  "groups.upload.created_toast": "Гурӯҳ захира шуд"
+  "groups.upload.created_toast": "Гурӯҳ захира шуд",
+
+  "error_page.404.title": "Саҳифа ёфт нашуд",
+  "error_page.404.text": "Саҳифаи дархостшуда вуҷуд надорад ё дастнорас аст.",
+  "error_page.404.back_to_groups": "Ба рӯйхати гурӯҳҳо",
+
+  "groups.detail.back": "Ба рӯйхати гурӯҳҳо",
+  "groups.detail.add_student": "Илова кардани донишҷӯ",
+  "groups.detail.columns_btn": "Сутунҳо",
+  "groups.detail.search_placeholder": "Ҷустуҷӯи донишҷӯён…",
+  "groups.detail.search_clear": "Тоза кардани ҷустуҷӯ",
+  "groups.detail.search_empty": "Ягон натиҷа ёфт нашуд",
+  "groups.detail.empty_text": "Дар ин гурӯҳ ҳоло донишҷӯ нест",
+  "groups.detail.empty_cell": "—",
+
+  "groups.student_add.title": "Илова кардани донишҷӯ",
+  "groups.student_add.success": "Донишҷӯ илова шуд",
+
+  "groups.student_delete.title": "Донишҷӯ нест карда шавад?",
+  "groups.student_delete.text": "Донишҷӯ аз гурӯҳ ва аз ҳамаи варақаҳои супоридан нест мешавад. Амалро бозгардондан мумкин нест.",
+  "groups.student_delete.success": "Донишҷӯ нест карда шуд",
+
+  "groups.columns_modal.title": "Сутунҳои ҷадвал",
+  "groups.columns_modal.last_col_hint": "Ягона сутуни боқимондаро гирифтан мумкин нест.",
+  "groups.columns_modal.removed_toast": "Сутун нест карда шуд"
 }

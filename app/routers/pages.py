@@ -2,11 +2,15 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
+from app.core.database import get_session
 from app.core.deps import get_current_user_optional
+from app.core.exceptions import AppError
 from app.core.i18n import get_lang, get_messages, normalize_lang
 from app.models.user import User
+from app.services.group_service import get_owned_group_or_404
 
 router = APIRouter()
 
@@ -142,6 +146,41 @@ async def group_upload_page(
         request,
         "groups/upload.html",
         base_context(request, user=user, active_nav="groups"),
+    )
+
+
+@router.get("/groups/{group_id}", response_class=HTMLResponse)
+async def group_detail_page(
+    group_id: int,
+    request: Request,
+    user: Annotated[User | None, Depends(get_current_user_optional)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Response:
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    templates = request.app.state.templates
+    try:
+        group = await get_owned_group_or_404(
+            session,
+            group_id=group_id,
+            owner_id=user.id,
+        )
+    except AppError:
+        return templates.TemplateResponse(
+            request,
+            "errors/404.html",
+            base_context(request, user=user, active_nav="groups"),
+            status_code=404,
+        )
+    return templates.TemplateResponse(
+        request,
+        "groups/detail.html",
+        base_context(
+            request,
+            user=user,
+            active_nav="groups",
+            group=group,
+        ),
     )
 
 

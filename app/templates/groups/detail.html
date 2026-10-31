@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon %}
+
+{% block title %}{{ group.number }} — {{ t('groups.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/groups.css">
+{% endblock %}
+
+{% block content %}
+<div class="stack stack--lg" data-group-detail-page data-group-id="{{ group.id }}">
+  <header class="stack">
+    <div>
+      <a class="btn btn--secondary" href="/groups?course={{ group.course }}" data-back-link>
+        {{ t('groups.detail.back') }}
+      </a>
+    </div>
+
+    <div class="page-header">
+      <div class="stack group-detail-heading">
+        <h1 data-group-title>{{ group.number }}</h1>
+        <div class="card__meta" data-group-meta>
+          <span data-meta-course>{{ t('groups.card.course', n=group.course) }}</span>
+          <span data-meta-students></span>
+          <span data-meta-modified></span>
+        </div>
+      </div>
+
+      <div class="cluster">
+        <button type="button" class="btn btn--primary" data-action-add-student>
+          {{ icon('plus') }}<span>{{ t('groups.detail.add_student') }}</span>
+        </button>
+        <button type="button" class="btn btn--secondary" data-action-columns>
+          {{ icon('edit') }}<span>{{ t('groups.detail.columns_btn') }}</span>
+        </button>
+        <a class="btn btn--secondary" href="/api/groups/{{ group.id }}/export" data-export-link>
+          {{ icon('excel') }}<span>{{ t('common.download_excel') }}</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="stack" data-students-section hidden>
+    <div class="search-bar">
+      <label class="visually-hidden" for="student-search-input">{{ t('common.search') }}</label>
+      <div class="search-box">
+        {{ icon('search', 'search-box__icon') }}
+        <input
+          class="input search-box__input"
+          id="student-search-input"
+          type="search"
+          placeholder="{{ t('groups.detail.search_placeholder') }}"
+          autocomplete="off"
+          data-search-input
+        >
+        <button
+          type="button"
+          class="icon-btn search-box__clear"
+          aria-label="{{ t('groups.detail.search_clear') }}"
+          data-search-clear
+          hidden
+        >
+          {{ icon('close', 'icon--sm') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="table-wrap students-table-wrap" data-table-wrap>
+      <table class="table students-table" data-students-table>
+        <thead>
+          <tr data-students-thead-row></tr>
+        </thead>
+        <tbody data-students-tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card empty" data-search-empty hidden>
+      <span class="empty__icon">{{ icon('search', 'icon--lg') }}</span>
+      <p>{{ t('groups.detail.search_empty') }}</p>
+    </div>
+  </section>
+
+  <div class="card empty" data-empty-students hidden>
+    <span class="empty__icon">{{ icon('groups', 'icon--lg') }}</span>
+    <p>{{ t('groups.detail.empty_text') }}</p>
+    <button type="button" class="btn btn--primary" data-action-add-student>
+      {{ icon('plus') }}<span>{{ t('groups.detail.add_student') }}</span>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/pages/group_detail.js"></script>
+{% endblock %}
