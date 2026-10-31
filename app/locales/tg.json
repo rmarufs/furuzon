@@ -49,12 +49,17 @@
   "errors.invalid_credentials": "Email ё пароли воридшуда нодуруст аст.",
   "errors.invalid_or_expired_token": "Пайванди барқароркунии парол нодуруст аст ё муҳлаташ гузаштааст.",
   "errors.wrong_current_password": "Пароли ҷорӣ нодуруст аст.",
+  "errors.invalid_file_type": "Формати файл дастгирӣ намешавад. Файли .xlsx ё .xls-ро бор кунед.",
+  "errors.file_too_large": "Ҳаҷми файл аз ҳад калон аст. Ҳаҷми ниҳоӣ — 10 МБ.",
+  "errors.excel_empty": "Дар файл маълумот нест.",
+  "errors.excel_too_large": "Дар ҷадвал сатрҳо (зиёда аз 2000) ё сутунҳо (зиёда аз 50) аз ҳад зиёданд.",
+  "errors.invalid_header_row": "Сатри сарлавҳа нодуруст интихоб шудааст.",
   "errors.unknown": "Иҷрои амал муяссар нашуд.",
 
   "mail.reset.subject": "Барқароркунии парол — Furuzon",
   "mail.reset.body": "Барои барқарор кардани парол ба пайванди зерин гузаред (1 соат эътибор дорад):\n{link}\n\nАгар шумо барқароркунии паролро дархост накарда бошед, ин номаро нодида гиред.",
 
-  "auth.email_label": "Почтаи электронӣ",
+  "auth.email_label": "Email",
   "auth.password_label": "Парол",
   "auth.new_password_label": "Пароли нав",
   "auth.current_password_label": "Пароли ҷорӣ",
@@ -62,7 +67,7 @@
   "auth.show_password": "Нишон додан",
   "auth.hide_password": "Пинҳон кардан",
 
-  "auth.login.title": "Воридшавӣ ба утоқ",
+  "auth.login.title": "Воридшавӣ ба кабинет",
   "auth.login.submit": "Ворид шудан",
   "auth.login.forgot_link": "Паролро фаромӯш кардед?",
   "auth.login.no_account": "Ҳисоб надоред?",
@@ -74,7 +79,7 @@
   "auth.register.login_link": "Ворид шудан",
 
   "auth.forgot.title": "Барқароркунии парол",
-  "auth.forgot.description": "Почтаи электрониеро, ки бо он ҳисоб кушода шудааст, ворид кунед ва мо пайванди барқароркунии паролро мефиристем.",
+  "auth.forgot.description": "Email-ро, ки бо он ҳисоб кушода шудааст, ворид кунед ва мо пайванди барқароркунии паролро мефиристем.",
   "auth.forgot.submit": "Фиристодани пайванд",
   "auth.forgot.sent_message": "Агар чунин email ба қайд гирифта шуда бошад, мо пайванди барқароркунии паролро фиристодем.",
   "auth.forgot.back_to_login": "Бозгашт ба воридшавӣ",
@@ -90,7 +95,7 @@
   "settings.password_changed": "Парол бо муваффақият иваз карда шуд.",
 
   "home.title": "Асосӣ",
-  "home.welcome": "Ба утоқи шахсии омӯзгор Furuzon хуш омадед.",
+  "home.welcome": "Ба кабинети шахсии омӯзгор Furuzon хуш омадед.",
 
   "ui.title": "Намоиши интерфейс",
   "ui.intro": "Саҳифаи муваққатӣ барои санҷиши компонентҳо дар ҳарду мавзӯъ ва забон.",

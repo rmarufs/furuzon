@@ -49,6 +49,11 @@
   "errors.invalid_credentials": "Неверный email или пароль.",
   "errors.invalid_or_expired_token": "Ссылка для сброса пароля недействительна или устарела.",
   "errors.wrong_current_password": "Неверный текущий пароль.",
+  "errors.invalid_file_type": "Неподдерживаемый формат файла. Загрузите файл .xlsx или .xls.",
+  "errors.file_too_large": "Файл слишком большой. Максимальный размер — 10 МБ.",
+  "errors.excel_empty": "В файле нет данных.",
+  "errors.excel_too_large": "В таблице слишком много строк (более 2000) или колонок (более 50).",
+  "errors.invalid_header_row": "Выбрана неверная строка заголовка.",
   "errors.unknown": "Не удалось выполнить действие.",
 
   "mail.reset.subject": "Сброс пароля — Furuzon",

@@ -10,3 +10,4 @@ test-results/
 playwright-report/
 uploads/*
 !uploads/.gitkeep
+tests/fixtures/private/
