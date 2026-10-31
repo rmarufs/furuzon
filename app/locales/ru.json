@@ -44,7 +44,15 @@
   "errors.internal_error": "Что-то пошло не так. Попробуйте позже.",
   "errors.validation_error": "Проверьте введённые данные.",
   "errors.unauthorized": "Войдите в аккаунт.",
+  "errors.not_authenticated": "Войдите в аккаунт.",
+  "errors.email_taken": "Этот email уже зарегистрирован.",
+  "errors.invalid_credentials": "Неверный email или пароль.",
+  "errors.invalid_or_expired_token": "Ссылка для сброса пароля недействительна или устарела.",
+  "errors.wrong_current_password": "Неверный текущий пароль.",
   "errors.unknown": "Не удалось выполнить действие.",
+
+  "mail.reset.subject": "Сброс пароля — Furuzon",
+  "mail.reset.body": "Для сброса пароля перейдите по ссылке (действует 1 час):\n{link}\n\nЕсли вы не запрашивали сброс пароля, просто проигнорируйте это письмо.",
 
   "ui.title": "Витрина интерфейса",
   "ui.intro": "Временная страница для проверки компонентов в обеих темах и языках.",
