@@ -12,7 +12,7 @@ from app.core.config import settings
 from app.core.database import get_session
 from app.core.exceptions import register_exception_handlers
 from app.core.i18n import install_jinja
-from app.routers import auth, pages
+from app.routers import auth, groups, pages
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -32,6 +32,7 @@ install_jinja(templates.env)
 app.state.templates = templates
 
 app.include_router(auth.router)
+app.include_router(groups.router)
 app.include_router(pages.router)
 
 

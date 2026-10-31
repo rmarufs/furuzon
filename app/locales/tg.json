@@ -54,6 +54,8 @@
   "errors.excel_empty": "Дар файл маълумот нест.",
   "errors.excel_too_large": "Дар ҷадвал сатрҳо (зиёда аз 2000) ё сутунҳо (зиёда аз 50) аз ҳад зиёданд.",
   "errors.invalid_header_row": "Сатри сарлавҳа нодуруст интихоб шудааст.",
+  "errors.invalid_columns": "Сутунҳои ҷадвал нодуруст интихоб шудаанд.",
+  "errors.group_not_found": "Гурӯҳ ёфт нашуд.",
   "errors.unknown": "Иҷрои амал муяссар нашуд.",
 
   "mail.reset.subject": "Барқароркунии парол — Furuzon",
