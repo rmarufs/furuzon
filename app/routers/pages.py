@@ -115,6 +115,36 @@ async def reset_password_page(
     )
 
 
+@router.get("/groups", response_class=HTMLResponse)
+async def groups_page(
+    request: Request,
+    user: Annotated[User | None, Depends(get_current_user_optional)],
+) -> Response:
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request,
+        "groups/index.html",
+        base_context(request, user=user, active_nav="groups"),
+    )
+
+
+@router.get("/groups/new", response_class=HTMLResponse)
+async def group_upload_page(
+    request: Request,
+    user: Annotated[User | None, Depends(get_current_user_optional)],
+) -> Response:
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request,
+        "groups/upload.html",
+        base_context(request, user=user, active_nav="groups"),
+    )
+
+
 @router.get("/settings", response_class=HTMLResponse)
 async def settings_page(
     request: Request,

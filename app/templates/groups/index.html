@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon %}
+
+{% block title %}{{ t('groups.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/groups.css">
+{% endblock %}
+
+{% block content %}
+<div class="stack stack--lg" data-groups-page>
+  <header class="page-header">
+    <h1>{{ t('groups.title') }}</h1>
+    <a class="btn btn--primary" href="/groups/new">
+      {{ icon('plus') }}<span>{{ t('groups.upload_button') }}</span>
+    </a>
+  </header>
+
+  <section class="stack" data-courses-section hidden>
+    <fieldset class="fieldset">
+      <legend class="fieldset__legend">{{ t('groups.course_filter_label') }}</legend>
+      <div class="chips" data-course-chips></div>
+    </fieldset>
+
+    <div class="card-grid" data-groups-grid></div>
+
+    <div class="card empty" data-empty-course hidden>
+      <p class="text-muted">{{ t('groups.empty_course.text') }}</p>
+    </div>
+  </section>
+
+  <div class="card empty" data-empty-all hidden>
+    <span class="empty__icon">{{ icon('groups', 'icon--lg') }}</span>
+    <p>{{ t('groups.empty_all.text') }}</p>
+    <a class="btn btn--primary" href="/groups/new">
+      {{ icon('plus') }}<span>{{ t('groups.empty_all.action') }}</span>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/pages/groups.js"></script>
+{% endblock %}

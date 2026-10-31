@@ -167,5 +167,52 @@
   "ui.table.not_done": "Супурда нашуд",
 
   "ui.fonts.label": "Ҳарфҳои тоҷикӣ",
-  "ui.fonts.letters": "Ғ ғ Ӣ ӣ Қ қ Ӯ ӯ Ҳ ҳ Ҷ ҷ"
+  "ui.fonts.letters": "Ғ ғ Ӣ ӣ Қ қ Ӯ ӯ Ҳ ҳ Ҷ ҷ",
+
+  "students_count.other": "{n} донишҷӯ",
+
+  "groups.title": "Гурӯҳҳои ман",
+  "groups.upload_button": "Бор кардани гурӯҳ",
+  "groups.course_filter_label": "Курс",
+  "groups.course_chip": "Курси {n}",
+  "groups.card.course": "Курси {n}",
+  "groups.card.modified": "Тағйир ёфт: {date}",
+  "groups.menu.rename": "Иваз кардани ном",
+  "groups.menu.edit": "Таҳрир кардан",
+  "groups.menu.delete": "Нест кардан",
+  "groups.empty_all.text": "Ҳоло ягон гурӯҳ нест",
+  "groups.empty_all.action": "Бор кардани гурӯҳ",
+  "groups.empty_course.text": "Дар ин курс ҳоло гурӯҳ нест",
+
+  "groups.rename.title": "Иваз кардани рақами гурӯҳ",
+  "groups.rename.label": "Рақами гурӯҳ",
+  "groups.rename.success": "Рақами гурӯҳ нав карда шуд",
+
+  "groups.delete.title": "Гурӯҳ нест карда шавад?",
+  "groups.delete.text": "Рӯйхати донишҷӯён, ҳамаи варақаҳои супоридан ва файлҳои вобастаи ин гурӯҳ нест карда мешаванд. Амалро бозгардондан мумкин нест.",
+  "groups.delete.success": "Гурӯҳ нест карда шуд",
+
+  "groups.upload.title": "Бор кардани гурӯҳ аз Excel",
+  "groups.upload.back": "Ба рӯйхати гурӯҳҳо",
+  "groups.upload.step_file": "1. Файли Excel-ро интихоб кунед",
+  "groups.upload.dropzone_text": "Файли .xlsx ё .xls-ро ба ин ҷо кашед ё тугмаи зеринро пахш кунед",
+  "groups.upload.choose_file": "Интихоби файл",
+  "groups.upload.selected_file": "Файл: {name}",
+  "groups.upload.step_preview": "2. Пешнамоиши ҷадвал",
+  "groups.upload.preview_hint": "Агар сарлавҳа нодуруст муайян шуда бошад, ба сатри лозима пахш кунед.",
+  "groups.upload.header_badge": "Сарлавҳа",
+  "groups.upload.data_rows": "Сатрҳои донишҷӯён: {n}",
+  "groups.upload.step_columns": "3. Танзими сутунҳо",
+  "groups.upload.columns_hint": "Сутунҳои лозимаро гузоред ва тартиби онҳоро муайян кунед.",
+  "groups.upload.col_up": "Боло",
+  "groups.upload.col_down": "Поён",
+  "groups.upload.col_remove": "Гирифтан",
+  "groups.upload.col_remove_title": "Сутун гирифта шавад?",
+  "groups.upload.col_remove_text": "Сутун пурра нест карда мешавад ва ба файли Excel намеафтад.",
+  "groups.upload.col_remove_confirm": "Ҳа, гирифта шавад",
+  "groups.upload.step_details": "4. Рақами гурӯҳ ва курс",
+  "groups.upload.number_label": "Рақами гурӯҳ",
+  "groups.upload.course_label": "Курс",
+  "groups.upload.submit": "Захира кардан",
+  "groups.upload.created_toast": "Гурӯҳ захира шуд"
 }

@@ -27,6 +27,32 @@ export function getLang() {
   return document.documentElement.lang;
 }
 
+export function tp(key, n, params = {}) {
+  const lang = getLang();
+  const merged = { ...params, n };
+  if (lang === "tg") {
+    const otherKey = `${key}.other`;
+    return t(hasKey(otherKey) ? otherKey : key, merged);
+  }
+
+  let rule = "other";
+  try {
+    rule = new Intl.PluralRules(lang).select(n);
+  } catch {
+    rule = "other";
+  }
+
+  const ruleKey = `${key}.${rule}`;
+  if (hasKey(ruleKey)) {
+    return t(ruleKey, merged);
+  }
+  const otherKey = `${key}.other`;
+  if (hasKey(otherKey)) {
+    return t(otherKey, merged);
+  }
+  return t(key, merged);
+}
+
 export async function setLang(lang) {
   document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
   if (document.documentElement.dataset.authenticated === "true") {
