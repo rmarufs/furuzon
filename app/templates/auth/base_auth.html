@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import logo %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/auth.css">
+{% endblock %}
+
+{% block body %}
+<main id="main" class="auth-layout">
+  <div class="auth-container">
+    <div class="auth-topbar">
+      <a class="brand" href="/login">{{ logo() }}<span>{{ t('app.name') }}</span></a>
+      <div class="auth-switches">
+        <div class="auth-switch-group" role="group" aria-label="{{ t('profile.language') }}">
+          <button type="button" class="auth-switch" data-lang-set="ru"
+                  aria-pressed="{{ 'true' if lang == 'ru' else 'false' }}">{{ t('lang.ru') }}</button>
+          <button type="button" class="auth-switch" data-lang-set="tg"
+                  aria-pressed="{{ 'true' if lang == 'tg' else 'false' }}">{{ t('lang.tg') }}</button>
+        </div>
+        <div class="auth-switch-group" role="group" aria-label="{{ t('profile.theme') }}">
+          <button type="button" class="auth-switch" data-theme-set="light"
+                  aria-pressed="{{ 'true' if theme == 'light' else 'false' }}">{{ t('profile.theme_light') }}</button>
+          <button type="button" class="auth-switch" data-theme-set="dark"
+                  aria-pressed="{{ 'true' if theme == 'dark' else 'false' }}">{{ t('profile.theme_dark') }}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card auth-card">
+      {% block auth_content %}{% endblock %}
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/pages/auth.js"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "auth/base_auth.html" %}
+
+{% block title %}{{ t('auth.register.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block auth_content %}
+<form class="stack" data-auth-form="register" novalidate>
+  <h1>{{ t('auth.register.title') }}</h1>
+
+  <div class="field">
+    <label class="field__label" for="register-email">{{ t('auth.email_label') }}</label>
+    <input class="input" id="register-email" name="email" type="email" autocomplete="email" required>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="register-password">{{ t('auth.password_label') }}</label>
+    <div class="password-wrap">
+      <input class="input" id="register-password" name="password" type="password"
+             autocomplete="new-password" minlength="8" maxlength="128"
+             aria-describedby="register-password-hint" required>
+      <button type="button" class="password-toggle" data-password-toggle="register-password">
+        {{ t('auth.show_password') }}
+      </button>
+    </div>
+    <p class="field__hint text-small text-muted" id="register-password-hint">
+      {{ t('auth.password_hint') }}
+    </p>
+  </div>
+
+  <p class="field__error" data-form-error role="alert" hidden></p>
+
+  <button type="submit" class="btn btn--primary">{{ t('auth.register.submit') }}</button>
+
+  <p class="auth-footer text-small text-muted">
+    <span>{{ t('auth.register.have_account') }}</span>
+    <a href="/login">{{ t('auth.register.login_link') }}</a>
+  </p>
+</form>
+{% endblock %}

@@ -3,7 +3,7 @@
   <button type="button" class="profile-btn" data-menu-toggle aria-controls="profile-menu"
           aria-haspopup="true" aria-expanded="false">
     {{ icon('profile') }}
-    <span class="profile-btn__name">{{ t('profile.name_placeholder') }}</span>
+    <span class="profile-btn__name">{{ user.email if user else t('profile.name_placeholder') }}</span>
     {{ icon('chevron-down', 'icon--sm') }}
   </button>
   <div class="menu" id="profile-menu" hidden>

@@ -27,7 +27,19 @@ export function getLang() {
   return document.documentElement.lang;
 }
 
-export function setLang(lang) {
+export async function setLang(lang) {
   document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+  if (document.documentElement.dataset.authenticated === "true") {
+    try {
+      await fetch("/api/me/preferences", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ language: lang }),
+      });
+    } catch {
+      // Cookie is already set; reload anyway.
+    }
+  }
   window.location.reload();
 }

@@ -11,6 +11,14 @@ export function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
   document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax`;
   syncThemeButtons();
+  if (document.documentElement.dataset.authenticated === "true") {
+    fetch("/api/me/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ theme }),
+    }).catch(() => {});
+  }
 }
 
 export function syncThemeButtons() {

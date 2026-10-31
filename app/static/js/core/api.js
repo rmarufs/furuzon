@@ -38,12 +38,16 @@ export async function api(path, { method = "GET", body, headers = {} } = {}) {
     throw new ApiError(0, "network_error");
   }
 
-  if (response.status === 401) {
-    window.location.assign(LOGIN_PATH);
-    throw new ApiError(401, "unauthorized");
-  }
   if (!response.ok) {
-    throw await readError(response);
+    const err = await readError(response);
+    if (
+      response.status === 401 &&
+      err.code === "not_authenticated" &&
+      window.location.pathname !== LOGIN_PATH
+    ) {
+      window.location.assign(LOGIN_PATH);
+    }
+    throw err;
   }
   if (response.status === 204) {
     return null;

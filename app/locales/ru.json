@@ -54,6 +54,44 @@
   "mail.reset.subject": "Сброс пароля — Furuzon",
   "mail.reset.body": "Для сброса пароля перейдите по ссылке (действует 1 час):\n{link}\n\nЕсли вы не запрашивали сброс пароля, просто проигнорируйте это письмо.",
 
+  "auth.email_label": "Электронная почта",
+  "auth.password_label": "Пароль",
+  "auth.new_password_label": "Новый пароль",
+  "auth.current_password_label": "Текущий пароль",
+  "auth.password_hint": "Не короче 8 символов",
+  "auth.show_password": "Показать",
+  "auth.hide_password": "Скрыть",
+
+  "auth.login.title": "Вход в кабинет",
+  "auth.login.submit": "Войти",
+  "auth.login.forgot_link": "Забыли пароль?",
+  "auth.login.no_account": "Нет аккаунта?",
+  "auth.login.register_link": "Зарегистрироваться",
+
+  "auth.register.title": "Регистрация",
+  "auth.register.submit": "Зарегистрироваться",
+  "auth.register.have_account": "Уже есть аккаунт?",
+  "auth.register.login_link": "Войти",
+
+  "auth.forgot.title": "Восстановление пароля",
+  "auth.forgot.description": "Укажите почту, на которую зарегистрирован аккаунт, и мы отправим ссылку для сброса пароля.",
+  "auth.forgot.submit": "Отправить ссылку",
+  "auth.forgot.sent_message": "Если такой email зарегистрирован, мы отправили ссылку для сброса пароля.",
+  "auth.forgot.back_to_login": "Вернуться ко входу",
+
+  "auth.reset.title": "Новый пароль",
+  "auth.reset.submit": "Сохранить пароль",
+  "auth.reset.success_message": "Пароль успешно изменён. Теперь вы можете войти с новым паролем.",
+  "auth.reset.login_link": "Перейти ко входу",
+
+  "settings.title": "Настройки аккаунта",
+  "settings.change_password_title": "Смена пароля",
+  "settings.submit": "Изменить пароль",
+  "settings.password_changed": "Пароль успешно изменён.",
+
+  "home.title": "Главная",
+  "home.welcome": "Добро пожаловать в личный кабинет преподавателя Furuzon.",
+
   "ui.title": "Витрина интерфейса",
   "ui.intro": "Временная страница для проверки компонентов в обеих темах и языках.",
   "ui.section.buttons": "Кнопки",

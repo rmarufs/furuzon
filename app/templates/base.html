@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}" data-theme="{{ theme }}">
+<html lang="{{ lang }}" data-theme="{{ theme }}"{% if user %} data-authenticated="true"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{{ t('app.name') }}{% endblock %}</title>
+  {% if not user %}
   <script>
     (function () {
       var match = document.cookie.match(/(?:^|; )theme=(light|dark)/);
@@ -13,6 +14,7 @@
       document.documentElement.setAttribute("data-theme", theme);
     })();
   </script>
+  {% endif %}
   <link rel="stylesheet" href="/static/css/tokens.css">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/layout.css">
@@ -21,6 +23,7 @@
 </head>
 <body>
   <a class="skip-link" href="#main">{{ t('nav.skip_to_content') }}</a>
+  {% block body %}
   <div class="shell">
     {% include "partials/sidebar.html" %}
     <div class="shell__body">
@@ -33,6 +36,7 @@
     </div>
     {% include "partials/bottom_nav.html" %}
   </div>
+  {% endblock %}
   <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
   <script type="application/json" id="i18n-data">{{ messages|tojson }}</script>
   <script type="module" src="/static/js/core/shell.js"></script>

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('settings.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/auth.css">
+{% endblock %}
+
+{% block content %}
+<div class="stack stack--lg settings-wrap">
+  <h1>{{ t('settings.title') }}</h1>
+
+  <section class="card stack" aria-labelledby="change-password-heading">
+    <h2 id="change-password-heading">{{ t('settings.change_password_title') }}</h2>
+
+    <form class="stack" data-settings-password-form novalidate>
+      <div class="field">
+        <label class="field__label" for="current-password">{{ t('auth.current_password_label') }}</label>
+        <div class="password-wrap">
+          <input class="input" id="current-password" name="current_password" type="password"
+                 autocomplete="current-password" required>
+          <button type="button" class="password-toggle" data-password-toggle="current-password">
+            {{ t('auth.show_password') }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="new-password">{{ t('auth.new_password_label') }}</label>
+        <div class="password-wrap">
+          <input class="input" id="new-password" name="new_password" type="password"
+                 autocomplete="new-password" minlength="8" maxlength="128"
+                 aria-describedby="new-password-hint" required>
+          <button type="button" class="password-toggle" data-password-toggle="new-password">
+            {{ t('auth.show_password') }}
+          </button>
+        </div>
+        <p class="field__hint text-small text-muted" id="new-password-hint">
+          {{ t('auth.password_hint') }}
+        </p>
+      </div>
+
+      <p class="field__error" data-form-error role="alert" hidden></p>
+      <p class="auth-notice" data-form-success role="status" hidden>{{ t('settings.password_changed') }}</p>
+
+      <div>
+        <button type="submit" class="btn btn--primary">{{ t('settings.submit') }}</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/pages/settings.js"></script>
+{% endblock %}
