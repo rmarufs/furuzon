@@ -2,11 +2,13 @@ import asyncio
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import AppError
 from app.models.group import Group, Student
+from app.services import student_search
+from app.services.excel.exporter import export_group_to_xlsx, sanitize_group_filename
 from app.services.excel.reader import read_workbook
 from app.services.excel.table import PreviewData, build_preview, build_table
 
@@ -26,6 +28,23 @@ async def get_owned_group_or_404(
     if group is None:
         raise AppError("group_not_found", status_code=404)
     return group
+
+
+async def _get_group_student_or_404(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    student_id: int,
+) -> Student:
+    student = await session.scalar(
+        select(Student).where(
+            Student.id == student_id,
+            Student.group_id == group_id,
+        )
+    )
+    if student is None:
+        raise AppError("student_not_found", status_code=404)
+    return student
 
 
 async def parse_group_excel(
@@ -260,3 +279,206 @@ async def delete_group(
     )
     await session.delete(group)
     await session.flush()
+
+
+async def add_student(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    owner_id: int,
+    data: dict[str, Any],
+) -> Student:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+
+    allowed_keys = {col["key"] for col in group.columns}
+    if not set(data.keys()).issubset(allowed_keys):
+        raise AppError("invalid_columns", status_code=422)
+
+    cleaned_data: dict[str, str] = {}
+    for col in group.columns:
+        key = col["key"]
+        raw_val = data.get(key, "")
+        if raw_val is None:
+            raw_val = ""
+        if not isinstance(raw_val, str):
+            raise AppError("validation_error", status_code=422)
+        trimmed = raw_val.strip()
+        if len(trimmed) > 500:
+            raise AppError("validation_error", status_code=422)
+        cleaned_data[key] = trimmed
+
+    if all(val == "" for val in cleaned_data.values()):
+        raise AppError("student_empty", status_code=422)
+
+    max_pos = await session.scalar(
+        select(func.max(Student.position)).where(Student.group_id == group.id)
+    )
+    next_pos = 0 if max_pos is None else int(max_pos) + 1
+
+    student = Student(
+        group_id=group.id,
+        position=next_pos,
+        data=cleaned_data,
+    )
+    session.add(student)
+    group.updated_at = datetime.now(UTC)
+    await session.flush()
+    await session.refresh(student)
+    return student
+
+
+async def update_student_cell(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    student_id: int,
+    owner_id: int,
+    key: str,
+    value: str,
+) -> Student:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+    allowed_keys = {col["key"] for col in group.columns}
+    if key not in allowed_keys:
+        raise AppError("invalid_columns", status_code=422)
+
+    student = await _get_group_student_or_404(
+        session,
+        group_id=group.id,
+        student_id=student_id,
+    )
+
+    new_data = dict(student.data)
+    new_data[key] = value
+    student.data = new_data
+    group.updated_at = datetime.now(UTC)
+    await session.flush()
+    await session.refresh(student)
+    return student
+
+
+async def delete_student(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    student_id: int,
+    owner_id: int,
+) -> None:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+    student = await _get_group_student_or_404(
+        session,
+        group_id=group.id,
+        student_id=student_id,
+    )
+    await session.delete(student)
+    group.updated_at = datetime.now(UTC)
+    await session.flush()
+
+
+async def delete_group_column(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    column_key: str,
+    owner_id: int,
+) -> dict[str, Any]:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+
+    existing_keys = [col["key"] for col in group.columns]
+    if column_key not in existing_keys:
+        raise AppError("column_not_found", status_code=404)
+
+    if len(group.columns) <= 1:
+        raise AppError("cannot_delete_last_column", status_code=409)
+
+    group.columns = [
+        col for col in group.columns if col["key"] != column_key
+    ]
+    group.updated_at = datetime.now(UTC)
+
+    await session.execute(
+        update(Student)
+        .where(Student.group_id == group.id)
+        .values(data=Student.data.op("-")(column_key))
+        .execution_options(synchronize_session="fetch")
+    )
+    await session.flush()
+    await session.refresh(group)
+
+    students_stmt = (
+        select(Student)
+        .where(Student.group_id == group.id)
+        .order_by(Student.position.asc(), Student.id.asc())
+    )
+    students = list((await session.scalars(students_stmt)).all())
+    return {
+        "id": group.id,
+        "number": group.number,
+        "course": group.course,
+        "columns": group.columns,
+        "students": students,
+        "created_at": group.created_at,
+        "updated_at": group.updated_at,
+    }
+
+
+async def search_group_students(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    owner_id: int,
+    query: str | None = None,
+) -> list[Student]:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+    students_stmt = (
+        select(Student)
+        .where(Student.group_id == group.id)
+        .order_by(Student.position.asc(), Student.id.asc())
+    )
+    students = list((await session.scalars(students_stmt)).all())
+    return student_search.search_students(students, query)
+
+
+async def export_group(
+    session: AsyncSession,
+    *,
+    group_id: int,
+    owner_id: int,
+) -> tuple[bytes, str]:
+    group = await get_owned_group_or_404(
+        session,
+        group_id=group_id,
+        owner_id=owner_id,
+    )
+    students_stmt = (
+        select(Student)
+        .where(Student.group_id == group.id)
+        .order_by(Student.position.asc(), Student.id.asc())
+    )
+    students = list((await session.scalars(students_stmt)).all())
+    xlsx_bytes = await asyncio.to_thread(
+        export_group_to_xlsx,
+        group.columns,
+        students,
+    )
+    filename = sanitize_group_filename(group.number)
+    return xlsx_bytes, filename

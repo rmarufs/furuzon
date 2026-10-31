@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -63,4 +64,23 @@ class GroupUpdateRequest(BaseModel):
         trimmed = value.strip()
         if not (1 <= len(trimmed) <= 50):
             raise ValueError("Group number must be between 1 and 50 characters")
+        return trimmed
+
+
+class StudentCreateRequest(BaseModel):
+    data: dict[str, Any]
+
+
+class StudentCellUpdateRequest(BaseModel):
+    key: str = Field(min_length=1)
+    value: str
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def validate_value(cls, value: Any) -> str:
+        if not isinstance(value, str):
+            raise ValueError("Value must be a string")
+        trimmed = value.strip()
+        if len(trimmed) > 500:
+            raise ValueError("Value must be at most 500 characters")
         return trimmed

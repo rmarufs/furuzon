@@ -56,6 +56,10 @@
   "errors.invalid_header_row": "Выбрана неверная строка заголовка.",
   "errors.invalid_columns": "Неверно выбраны колонки таблицы.",
   "errors.group_not_found": "Группа не найдена.",
+  "errors.student_not_found": "Студент не найден.",
+  "errors.student_empty": "Заполните хотя бы одно поле студента.",
+  "errors.cannot_delete_last_column": "Нельзя удалить последнюю колонку таблицы.",
+  "errors.column_not_found": "Колонка не найдена.",
   "errors.unknown": "Не удалось выполнить действие.",
 
   "mail.reset.subject": "Сброс пароля — Furuzon",

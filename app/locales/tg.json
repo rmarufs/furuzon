@@ -56,6 +56,10 @@
   "errors.invalid_header_row": "Сатри сарлавҳа нодуруст интихоб шудааст.",
   "errors.invalid_columns": "Сутунҳои ҷадвал нодуруст интихоб шудаанд.",
   "errors.group_not_found": "Гурӯҳ ёфт нашуд.",
+  "errors.student_not_found": "Донишҷӯ ёфт нашуд.",
+  "errors.student_empty": "Ҳадди ақал як майдони донишҷӯро пур кунед.",
+  "errors.cannot_delete_last_column": "Сутуни охирини ҷадвалро нест кардан мумкин нест.",
+  "errors.column_not_found": "Сутун ёфт нашуд.",
   "errors.unknown": "Иҷрои амал муяссар нашуд.",
 
   "mail.reset.subject": "Барқароркунии парол — Furuzon",

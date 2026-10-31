@@ -1,12 +1,13 @@
 import json
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
 from app.core.deps import get_current_user
 from app.core.exceptions import AppError
+from app.models.group import Student
 from app.models.user import User
 from app.schemas.auth import StatusResponse
 from app.schemas.group import (
@@ -14,8 +15,15 @@ from app.schemas.group import (
     GroupListItem,
     GroupParseResponse,
     GroupUpdateRequest,
+    StudentCellUpdateRequest,
+    StudentCreateRequest,
+    StudentItem,
 )
 from app.services import group_service
+from app.services.excel.exporter import (
+    XLSX_CONTENT_TYPE,
+    build_content_disposition,
+)
 from app.services.excel.reader import MAX_FILE_SIZE_BYTES
 
 router = APIRouter(prefix="/api", tags=["groups"])
@@ -144,3 +152,102 @@ async def delete_group(
         owner_id=user.id,
     )
     return StatusResponse()
+
+
+@router.delete("/groups/{group_id}/columns/{column_key}", response_model=GroupDetailResponse)
+async def delete_group_column(
+    group_id: int,
+    column_key: str,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    return await group_service.delete_group_column(
+        session,
+        group_id=group_id,
+        column_key=column_key,
+        owner_id=user.id,
+    )
+
+
+@router.get("/groups/{group_id}/students", response_model=list[StudentItem])
+async def list_or_search_students(
+    group_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    q: Annotated[str | None, Query()] = None,
+) -> list[Student]:
+    return await group_service.search_group_students(
+        session,
+        group_id=group_id,
+        owner_id=user.id,
+        query=q,
+    )
+
+
+@router.post("/groups/{group_id}/students", response_model=StudentItem)
+async def create_student(
+    group_id: int,
+    payload: StudentCreateRequest,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Student:
+    return await group_service.add_student(
+        session,
+        group_id=group_id,
+        owner_id=user.id,
+        data=payload.data,
+    )
+
+
+@router.patch("/groups/{group_id}/students/{student_id}", response_model=StudentItem)
+async def update_student_cell(
+    group_id: int,
+    student_id: int,
+    payload: StudentCellUpdateRequest,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Student:
+    return await group_service.update_student_cell(
+        session,
+        group_id=group_id,
+        student_id=student_id,
+        owner_id=user.id,
+        key=payload.key,
+        value=payload.value,
+    )
+
+
+@router.delete("/groups/{group_id}/students/{student_id}", status_code=204)
+async def delete_student(
+    group_id: int,
+    student_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Response:
+    await group_service.delete_student(
+        session,
+        group_id=group_id,
+        student_id=student_id,
+        owner_id=user.id,
+    )
+    return Response(status_code=204)
+
+
+@router.get("/groups/{group_id}/export")
+async def export_group(
+    group_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Response:
+    xlsx_bytes, filename = await group_service.export_group(
+        session,
+        group_id=group_id,
+        owner_id=user.id,
+    )
+    return Response(
+        content=xlsx_bytes,
+        media_type=XLSX_CONTENT_TYPE,
+        headers={
+            "Content-Disposition": build_content_disposition(filename),
+        },
+    )
