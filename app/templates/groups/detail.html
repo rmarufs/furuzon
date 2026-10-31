@@ -9,31 +9,31 @@
 
 {% block content %}
 <div class="stack stack--lg" data-group-detail-page data-group-id="{{ group.id }}">
-  <header class="stack">
+  <header class="stack group-detail-header">
     <div>
-      <a class="btn btn--secondary" href="/groups?course={{ group.course }}" data-back-link>
-        {{ t('groups.detail.back') }}
+      <a class="back-link" href="/groups?course={{ group.course }}" data-back-link>
+        <span aria-hidden="true">←</span><span>{{ t('groups.detail.back') }}</span>
       </a>
     </div>
 
-    <div class="page-header">
+    <div class="page-header group-detail-top">
       <div class="stack group-detail-heading">
         <h1 data-group-title>{{ group.number }}</h1>
-        <div class="card__meta" data-group-meta>
-          <span data-meta-course>{{ t('groups.card.course', n=group.course) }}</span>
+        <div class="card__meta group-detail-meta" data-group-meta>
+          <span class="badge group-card__course-badge" data-meta-course>{{ t('groups.card.course', n=group.course) }}</span>
           <span data-meta-students></span>
           <span data-meta-modified></span>
         </div>
       </div>
 
-      <div class="cluster">
-        <button type="button" class="btn btn--primary" data-action-add-student>
+      <div class="cluster group-detail-actions">
+        <button type="button" class="btn btn--primary group-detail-actions__primary" data-action-add-student>
           {{ icon('plus') }}<span>{{ t('groups.detail.add_student') }}</span>
         </button>
-        <button type="button" class="btn btn--secondary" data-action-columns>
+        <button type="button" class="btn btn--secondary group-detail-actions__secondary" data-action-columns>
           {{ icon('edit') }}<span>{{ t('groups.detail.columns_btn') }}</span>
         </button>
-        <a class="btn btn--secondary" href="/api/groups/{{ group.id }}/export" data-export-link>
+        <a class="btn btn--secondary group-detail-actions__secondary" href="/api/groups/{{ group.id }}/export" data-export-link>
           {{ icon('excel') }}<span>{{ t('common.download_excel') }}</span>
         </a>
       </div>
