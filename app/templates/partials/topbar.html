@@ -1,0 +1,5 @@
+{% from "partials/macros.html" import logo %}
+<header class="topbar">
+  <a class="brand" href="/">{{ logo() }}<span>{{ t('app.name') }}</span></a>
+  {% include "partials/profile_menu.html" %}
+</header>

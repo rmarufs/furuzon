@@ -1,0 +1,39 @@
+{% from "partials/macros.html" import icon %}
+<div class="menu-wrap">
+  <button type="button" class="profile-btn" data-menu-toggle aria-controls="profile-menu"
+          aria-haspopup="true" aria-expanded="false">
+    {{ icon('profile') }}
+    <span class="profile-btn__name">{{ t('profile.name_placeholder') }}</span>
+    {{ icon('chevron-down', 'icon--sm') }}
+  </button>
+  <div class="menu" id="profile-menu" hidden>
+    <p class="menu__label" id="profile-lang-label">{{ t('profile.language') }}</p>
+    <div role="group" aria-labelledby="profile-lang-label" class="menu__group">
+      <button type="button" class="menu__item" data-lang-set="ru"
+              aria-pressed="{{ 'true' if lang == 'ru' else 'false' }}">
+        {{ icon('language') }}<span>{{ t('lang.ru') }}</span>{{ icon('check', 'menu__tick') }}
+      </button>
+      <button type="button" class="menu__item" data-lang-set="tg"
+              aria-pressed="{{ 'true' if lang == 'tg' else 'false' }}">
+        {{ icon('language') }}<span>{{ t('lang.tg') }}</span>{{ icon('check', 'menu__tick') }}
+      </button>
+    </div>
+    <hr class="menu__separator">
+    <p class="menu__label" id="profile-theme-label">{{ t('profile.theme') }}</p>
+    <div role="group" aria-labelledby="profile-theme-label" class="menu__group">
+      <button type="button" class="menu__item" data-theme-set="light"
+              aria-pressed="{{ 'true' if theme == 'light' else 'false' }}">
+        {{ icon('theme') }}<span>{{ t('profile.theme_light') }}</span>{{ icon('check', 'menu__tick') }}
+      </button>
+      <button type="button" class="menu__item" data-theme-set="dark"
+              aria-pressed="{{ 'true' if theme == 'dark' else 'false' }}">
+        {{ icon('theme') }}<span>{{ t('profile.theme_dark') }}</span>{{ icon('check', 'menu__tick') }}
+      </button>
+    </div>
+    <hr class="menu__separator">
+    <a class="menu__item" href="/settings">{{ icon('settings') }}<span>{{ t('profile.settings') }}</span></a>
+    <button type="button" class="menu__item menu__item--danger" data-action="logout">
+      {{ icon('logout') }}<span>{{ t('profile.logout') }}</span>
+    </button>
+  </div>
+</div>

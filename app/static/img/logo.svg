@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:none">
+  <!-- Logo mark. Colors come from design tokens: use via <use href="logo.svg#logo"> inside the page. -->
+  <symbol id="logo" viewBox="0 0 32 32">
+    <rect width="32" height="32" rx="8" style="fill: var(--color-primary)"/>
+    <path d="M12 24V8.5h9.5M12 16h7" style="fill: none; stroke: var(--color-on-primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"/>
+  </symbol>
+</svg>

@@ -1,0 +1,7 @@
+{% macro icon(name, extra_class='') -%}
+<svg class="icon {{ extra_class }}" aria-hidden="true" focusable="false"><use href="/static/img/icons.svg#i-{{ name }}"/></svg>
+{%- endmacro %}
+
+{% macro logo() -%}
+<svg class="brand__mark" aria-hidden="true" focusable="false"><use href="/static/img/logo.svg#logo"/></svg>
+{%- endmacro %}
