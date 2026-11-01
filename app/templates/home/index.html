@@ -3,10 +3,5 @@
 {% block title %}{{ t('home.title') }} — {{ t('app.name') }}{% endblock %}
 
 {% block content %}
-<div class="stack">
-  <h1>{{ t('home.title') }}</h1>
-  <div class="card">
-    <p>{{ t('home.welcome') }}</p>
-  </div>
-</div>
+{% include "home/welcome.html" %}
 {% endblock %}

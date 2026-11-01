@@ -1,0 +1,34 @@
+{% from "partials/macros.html" import icon %}
+<section class="home-welcome stack stack--lg" aria-labelledby="home-welcome-heading">
+  <div class="home-welcome__hero">
+    <div class="home-welcome__copy stack">
+      <h1 class="home-welcome__title" id="home-welcome-heading">{{ t('home.welcome') }}</h1>
+      <p class="home-welcome__subtitle">{{ t('home.subtitle') }}</p>
+    </div>
+    <div class="home-welcome__actions">
+      <a class="btn btn--primary" href="/groups/new">
+        {{ icon('plus') }}<span>{{ t('home.create_first_group') }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="home-welcome__grid">
+    <article class="card home-feature">
+      <div class="home-feature__icon" aria-hidden="true">{{ icon('groups') }}</div>
+      <h2 class="card__title home-feature__title">{{ t('home.feature_groups_title') }}</h2>
+      <p class="home-feature__desc text-muted">{{ t('home.feature_groups_desc') }}</p>
+    </article>
+
+    <article class="card home-feature">
+      <div class="home-feature__icon" aria-hidden="true">{{ icon('sheets') }}</div>
+      <h2 class="card__title home-feature__title">{{ t('home.feature_sheets_title') }}</h2>
+      <p class="home-feature__desc text-muted">{{ t('home.feature_sheets_desc') }}</p>
+    </article>
+
+    <article class="card home-feature">
+      <div class="home-feature__icon" aria-hidden="true">{{ icon('materials') }}</div>
+      <h2 class="card__title home-feature__title">{{ t('home.feature_materials_title') }}</h2>
+      <p class="home-feature__desc text-muted">{{ t('home.feature_materials_desc') }}</p>
+    </article>
+  </div>
+</section>

@@ -55,6 +55,17 @@ async def test_auth_pages_redirect_to_home_when_authenticated(
     assert home_res.status_code == 200
     assert "Фарход Назаров" in home_res.text
     assert "logged@example.com" in home_res.text
+    assert "Добро пожаловать в личный кабинет преподавателя" in home_res.text
+    assert "Создать первую группу" in home_res.text
+    assert 'href="/groups/new"' in home_res.text
+
+    bottom_nav_start = home_res.text.index('class="bottom-nav"')
+    bottom_nav_end = home_res.text.index("</nav>", bottom_nav_start)
+    bottom_nav_html = home_res.text[bottom_nav_start:bottom_nav_end]
+    pos_materials = bottom_nav_html.index('href="/materials"')
+    pos_sheets = bottom_nav_html.index('href="/sheets"')
+    pos_groups = bottom_nav_html.index('href="/groups"')
+    assert pos_materials < pos_sheets < pos_groups
 
     settings_res = await client.get("/settings", follow_redirects=False)
     assert settings_res.status_code == 200

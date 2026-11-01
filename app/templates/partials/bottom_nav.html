@@ -1,12 +1,12 @@
 {% from "partials/macros.html" import icon %}
 <nav class="bottom-nav" aria-label="{{ t('nav.main_label') }}">
-  <a class="bottom-nav__link" href="/groups"{% if active_nav == 'groups' %} aria-current="page"{% endif %}>
-    {{ icon('groups') }}<span>{{ t('nav.groups') }}</span>
+  <a class="bottom-nav__link" href="/materials"{% if active_nav == 'materials' %} aria-current="page"{% endif %}>
+    {{ icon('materials') }}<span>{{ t('nav.materials') }}</span>
   </a>
   <a class="bottom-nav__link" href="/sheets"{% if active_nav == 'sheets' %} aria-current="page"{% endif %}>
     {{ icon('sheets') }}<span>{{ t('nav.sheets') }}</span>
   </a>
-  <a class="bottom-nav__link" href="/materials"{% if active_nav == 'materials' %} aria-current="page"{% endif %}>
-    {{ icon('materials') }}<span>{{ t('nav.materials') }}</span>
+  <a class="bottom-nav__link" href="/groups"{% if active_nav == 'groups' %} aria-current="page"{% endif %}>
+    {{ icon('groups') }}<span>{{ t('nav.groups') }}</span>
   </a>
 </nav>
