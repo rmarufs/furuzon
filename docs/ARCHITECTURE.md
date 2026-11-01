@@ -17,7 +17,7 @@
 
 | Таблица | Поля | Заметки |
 |---|---|---|
-| `users` | id, email (уникальный, в нижнем регистре), password_hash, language (`ru`/`tg`, по умолчанию `ru`), theme (`light`/`dark`, по умолчанию `light`), created_at | |
+| `users` | id, email (уникальный, в нижнем регистре), password_hash, first_name (текст до 50 символов, по умолчанию пустая строка), last_name (текст до 50 символов, по умолчанию пустая строка), language (`ru`/`tg`, по умолчанию `ru`), theme (`light`/`dark`, по умолчанию `light`), created_at | |
 | `password_reset_tokens` | id, user_id → users (cascade), token_hash, expires_at, used_at | токен живёт 1 час, одноразовый, в БД только хеш |
 | `groups` | id, owner_id → users (cascade), number (текст), course (1–6), columns (JSONB), created_at, updated_at | `columns` — упорядоченный список `[{key, title}]`, например `{"key":"c1","title":"ФИО"}`. Ключи стабильные, при перестановке не меняются |
 | `students` | id, group_id → groups (cascade), position, data (JSONB), created_at | `data` — `{ "c1": "Иванов И.", "c2": "..." }` по ключам колонок |
@@ -53,7 +53,7 @@
 ## 5. API (JSON, префикс `/api`, требуют входа)
 
 **Авторизация и профиль**
-`POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `POST /auth/forgot-password`, `POST /auth/reset-password`, `POST /auth/change-password`, `GET /auth/me`, `PATCH /me/preferences` (language, theme). Первые пять (кроме logout) — без входа.
+`POST /auth/register` (тело содержит first_name и last_name), `POST /auth/login`, `POST /auth/logout`, `POST /auth/forgot-password`, `POST /auth/reset-password`, `POST /auth/change-password`, `GET /auth/me` (возвращает ещё и имя с фамилией), `PATCH /me/profile` (first_name, last_name), `PATCH /me/preferences` (language, theme). Первые пять (кроме logout) — без входа.
 
 **Группы**
 - `POST /groups/parse` — multipart: файл и необязательный `header_row`. Возвращает предпросмотр (первые 30 строк), найденную строку заголовка и список колонок. Ничего не сохраняет.

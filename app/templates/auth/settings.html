@@ -10,6 +10,32 @@
 <div class="stack stack--lg settings-wrap">
   <h1>{{ t('settings.title') }}</h1>
 
+  <section class="card stack" aria-labelledby="profile-heading">
+    <h2 id="profile-heading">{{ t('settings.profile_title') }}</h2>
+
+    <form class="stack" data-settings-profile-form novalidate>
+      <div class="field">
+        <label class="field__label" for="profile-first-name">{{ t('auth.first_name_label') }}</label>
+        <input class="input" id="profile-first-name" name="first_name" type="text"
+               autocomplete="given-name" maxlength="50"
+               value="{{ user.first_name if user else '' }}" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="profile-last-name">{{ t('auth.last_name_label') }}</label>
+        <input class="input" id="profile-last-name" name="last_name" type="text"
+               autocomplete="family-name" maxlength="50"
+               value="{{ user.last_name if user else '' }}" required>
+      </div>
+
+      <p class="field__error" data-form-error role="alert" hidden></p>
+
+      <div>
+        <button type="submit" class="btn btn--primary">{{ t('common.save') }}</button>
+      </div>
+    </form>
+  </section>
+
   <section class="card stack" aria-labelledby="change-password-heading">
     <h2 id="change-password-heading">{{ t('settings.change_password_title') }}</h2>
 

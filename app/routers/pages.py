@@ -18,6 +18,23 @@ THEMES = ("light", "dark")
 DEFAULT_THEME = "light"
 
 
+def display_name(user: User) -> str:
+    first = (user.first_name or "").strip()
+    last = (user.last_name or "").strip()
+    full = f"{first} {last}".strip()
+    return full if full else user.email
+
+
+def user_initials(user: User) -> str:
+    first = (user.first_name or "").strip()
+    last = (user.last_name or "").strip()
+    letters = "".join(part[0].upper() for part in (first, last) if part)
+    if letters:
+        return letters
+    email = (user.email or "").strip()
+    return email[0].upper() if email else ""
+
+
 def base_context(
     request: Request,
     user: User | None = None,
@@ -34,6 +51,8 @@ def base_context(
 
     context: dict[str, Any] = {
         "user": user,
+        "display_name": display_name(user) if user is not None else "",
+        "user_initials": user_initials(user) if user is not None else "",
         "lang": lang,
         "messages": get_messages(lang),
         "theme": theme,

@@ -1,12 +1,21 @@
 {% from "partials/macros.html" import icon %}
+{% set shown_name = display_name if display_name else t('profile.name_placeholder') %}
+{% set shown_initials = user_initials if user_initials else shown_name[:1].upper() %}
 <div class="menu-wrap">
   <button type="button" class="profile-btn" data-menu-toggle aria-controls="profile-menu"
-          aria-haspopup="true" aria-expanded="false">
-    {{ icon('profile') }}
-    <span class="profile-btn__name">{{ user.email if user else t('profile.name_placeholder') }}</span>
+          aria-haspopup="true" aria-expanded="false" aria-label="{{ shown_name }}">
+    <span class="profile-btn__avatar" aria-hidden="true">{{ shown_initials }}</span>
+    <span class="profile-btn__name">{{ shown_name }}</span>
     {{ icon('chevron-down', 'icon--sm') }}
   </button>
   <div class="menu" id="profile-menu" hidden>
+    <div class="menu__header">
+      <p class="menu__user-name">{{ shown_name }}</p>
+      {% if user %}
+      <p class="menu__user-email text-small text-muted">{{ user.email }}</p>
+      {% endif %}
+    </div>
+    <hr class="menu__separator">
     <p class="menu__label" id="profile-lang-label">{{ t('profile.language') }}</p>
     <div role="group" aria-labelledby="profile-lang-label" class="menu__group">
       <button type="button" class="menu__item" data-lang-set="ru"

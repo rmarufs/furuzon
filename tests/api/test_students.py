@@ -20,10 +20,17 @@ async def _register(
     client: AsyncClient,
     email: str = "teacher@example.com",
     password: str = "password123",
+    first_name: str = "Иван",
+    last_name: str = "Петров",
 ) -> None:
     resp = await client.post(
         "/api/auth/register",
-        json={"email": email, "password": password},
+        json={
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password": password,
+        },
     )
     assert resp.status_code == 200
 

@@ -11,6 +11,7 @@ from app.schemas.auth import (
     ForgotPasswordRequest,
     LoginRequest,
     PreferencesUpdateRequest,
+    ProfileUpdateRequest,
     RegisterRequest,
     ResetPasswordRequest,
     StatusResponse,
@@ -31,6 +32,8 @@ async def register(
         session,
         email=payload.email,
         password=payload.password,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
         language=request.cookies.get("lang"),
         theme=request.cookies.get("theme"),
     )
@@ -106,6 +109,20 @@ async def get_me(
     user: Annotated[User, Depends(get_current_user)],
 ) -> User:
     return user
+
+
+@router.patch("/me/profile", response_model=UserResponse)
+async def update_profile(
+    payload: ProfileUpdateRequest,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> User:
+    return await auth_service.update_profile(
+        session,
+        user=user,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
+    )
 
 
 @router.patch("/me/preferences", response_model=UserResponse)

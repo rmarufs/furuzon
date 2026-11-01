@@ -12,6 +12,18 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    first_name: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="",
+        server_default="",
+    )
+    last_name: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="",
+        server_default="",
+    )
     language: Mapped[str] = mapped_column(
         String(8),
         nullable=False,

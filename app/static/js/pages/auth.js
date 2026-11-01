@@ -67,6 +67,8 @@ for (const form of document.querySelectorAll("[data-auth-form]")) {
 
       if (kind === "register") {
         await apiPost("/auth/register", {
+          first_name: String(formData.get("first_name") || "").trim(),
+          last_name: String(formData.get("last_name") || "").trim(),
           email: String(formData.get("email") || "").trim(),
           password: String(formData.get("password") || ""),
         });

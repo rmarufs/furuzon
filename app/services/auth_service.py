@@ -26,6 +26,8 @@ async def register_user(
     *,
     email: str,
     password: str,
+    first_name: str,
+    last_name: str,
     language: str | None = None,
     theme: str | None = None,
 ) -> User:
@@ -42,6 +44,8 @@ async def register_user(
     user = User(
         email=normalized_email,
         password_hash=hash_password(password),
+        first_name=first_name.strip(),
+        last_name=last_name.strip(),
         language=resolved_lang,
         theme=resolved_theme,
     )
@@ -150,6 +154,19 @@ async def change_password(
 
     user.password_hash = hash_password(new_password)
     await session.flush()
+
+
+async def update_profile(
+    session: AsyncSession,
+    *,
+    user: User,
+    first_name: str,
+    last_name: str,
+) -> User:
+    user.first_name = first_name.strip()
+    user.last_name = last_name.strip()
+    await session.flush()
+    return user
 
 
 async def update_preferences(

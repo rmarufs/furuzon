@@ -24,11 +24,18 @@ async def test_register_and_me(client: AsyncClient) -> None:
 
     reg = await client.post(
         "/api/auth/register",
-        json={"email": "Teacher@Example.com", "password": "password123"},
+        json={
+            "first_name": "  Рустам  ",
+            "last_name": "  Шарипов  ",
+            "email": "Teacher@Example.com",
+            "password": "password123",
+        },
     )
     assert reg.status_code == 200
     data = reg.json()
     assert data["email"] == "teacher@example.com"
+    assert data["first_name"] == "Рустам"
+    assert data["last_name"] == "Шарипов"
     assert data["language"] == "tg"
     assert data["theme"] == "dark"
 
@@ -36,6 +43,8 @@ async def test_register_and_me(client: AsyncClient) -> None:
     assert me.status_code == 200
     assert me.json()["id"] == data["id"]
     assert me.json()["email"] == "teacher@example.com"
+    assert me.json()["first_name"] == "Рустам"
+    assert me.json()["last_name"] == "Шарипов"
 
 
 async def test_register_duplicate_email_case_insensitive(
@@ -43,13 +52,23 @@ async def test_register_duplicate_email_case_insensitive(
 ) -> None:
     first = await client.post(
         "/api/auth/register",
-        json={"email": "user@example.com", "password": "password123"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "user@example.com",
+            "password": "password123",
+        },
     )
     assert first.status_code == 200
 
     second = await client.post(
         "/api/auth/register",
-        json={"email": "USER@EXAMPLE.COM", "password": "password123"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "USER@EXAMPLE.COM",
+            "password": "password123",
+        },
     )
     assert second.status_code == 409
     assert second.json()["error"]["code"] == "email_taken"
@@ -58,10 +77,71 @@ async def test_register_duplicate_email_case_insensitive(
 async def test_register_short_password(client: AsyncClient) -> None:
     res = await client.post(
         "/api/auth/register",
-        json={"email": "short@example.com", "password": "short"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "short@example.com",
+            "password": "short",
+        },
     )
     assert res.status_code == 422
     assert res.json()["error"]["code"] == "validation_error"
+
+
+async def test_register_name_validation(client: AsyncClient) -> None:
+    invalid_payloads = [
+        {"email": "no-names@example.com", "password": "password123"},
+        {
+            "first_name": "Иван",
+            "email": "no-last@example.com",
+            "password": "password123",
+        },
+        {
+            "last_name": "Петров",
+            "email": "no-first@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "",
+            "last_name": "Петров",
+            "email": "empty-first@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "Иван",
+            "last_name": "",
+            "email": "empty-last@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "   ",
+            "last_name": "Петров",
+            "email": "spaces-first@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "Иван",
+            "last_name": "   ",
+            "email": "spaces-last@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "А" * 51,
+            "last_name": "Петров",
+            "email": "long-first@example.com",
+            "password": "password123",
+        },
+        {
+            "first_name": "Иван",
+            "last_name": "Б" * 51,
+            "email": "long-last@example.com",
+            "password": "password123",
+        },
+    ]
+    for payload in invalid_payloads:
+        res = await client.post("/api/auth/register", json=payload)
+        assert res.status_code == 422, payload
+        assert res.json()["error"]["code"] == "validation_error"
 
 
 async def test_me_unauthenticated(client: AsyncClient) -> None:
@@ -73,7 +153,12 @@ async def test_me_unauthenticated(client: AsyncClient) -> None:
 async def test_login_and_logout(client: AsyncClient) -> None:
     await client.post(
         "/api/auth/register",
-        json={"email": "login@example.com", "password": "password123"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "login@example.com",
+            "password": "password123",
+        },
     )
 
     logout_res = await client.post("/api/auth/logout")
@@ -116,7 +201,12 @@ async def test_forgot_and_reset_password_flow(
 
     await client.post(
         "/api/auth/register",
-        json={"email": "reset@example.com", "password": "oldpassword1"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "reset@example.com",
+            "password": "oldpassword1",
+        },
     )
     await client.post("/api/auth/logout")
 
@@ -197,7 +287,12 @@ async def test_reset_password_expired_and_unknown_token(
 
     await client.post(
         "/api/auth/register",
-        json={"email": "exp@example.com", "password": "oldpassword1"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "exp@example.com",
+            "password": "oldpassword1",
+        },
     )
     await client.post("/api/auth/logout")
 
@@ -232,7 +327,12 @@ async def test_reset_password_expired_and_unknown_token(
 async def test_change_password_and_preferences(client: AsyncClient) -> None:
     await client.post(
         "/api/auth/register",
-        json={"email": "prefs@example.com", "password": "initialpass1"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "prefs@example.com",
+            "password": "initialpass1",
+        },
     )
 
     bad_change = await client.post(
@@ -288,7 +388,12 @@ async def test_reset_password_token_cannot_be_reused(
 
     await client.post(
         "/api/auth/register",
-        json={"email": "once@example.com", "password": "oldpassword1"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "once@example.com",
+            "password": "oldpassword1",
+        },
     )
     await client.post("/api/auth/logout")
 
@@ -326,7 +431,12 @@ async def test_forgot_password_nonexistent_email_same_response_and_no_mail(
 
     await client.post(
         "/api/auth/register",
-        json={"email": "known@example.com", "password": "password123"},
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "known@example.com",
+            "password": "password123",
+        },
     )
     await client.post("/api/auth/logout")
 
@@ -344,4 +454,97 @@ async def test_forgot_password_nonexistent_email_same_response_and_no_mail(
     assert existing_res.status_code == missing_res.status_code
     assert existing_res.json() == missing_res.json()
     assert len(sent_emails) == 1
+
+
+async def test_update_profile_and_validation(client: AsyncClient) -> None:
+    unauth = await client.patch(
+        "/api/me/profile",
+        json={"first_name": "Новое", "last_name": "Имя"},
+    )
+    assert unauth.status_code == 401
+    assert unauth.json()["error"]["code"] == "not_authenticated"
+
+    await client.post(
+        "/api/auth/register",
+        json={
+            "first_name": "Старое",
+            "last_name": "Имя",
+            "email": "profile@example.com",
+            "password": "password123",
+        },
+    )
+
+    updated = await client.patch(
+        "/api/me/profile",
+        json={"first_name": "  Далер  ", "last_name": "  Рахимов  "},
+    )
+    assert updated.status_code == 200
+    assert updated.json()["first_name"] == "Далер"
+    assert updated.json()["last_name"] == "Рахимов"
+
+    me = await client.get("/api/auth/me")
+    assert me.status_code == 200
+    assert me.json()["first_name"] == "Далер"
+    assert me.json()["last_name"] == "Рахимов"
+
+    for bad_payload in (
+        {},
+        {"first_name": "", "last_name": "Рахимов"},
+        {"first_name": "Далер", "last_name": "   "},
+        {"first_name": "А" * 51, "last_name": "Рахимов"},
+        {"first_name": "Далер", "last_name": "Б" * 51},
+    ):
+        bad_res = await client.patch("/api/me/profile", json=bad_payload)
+        assert bad_res.status_code == 422, bad_payload
+        assert bad_res.json()["error"]["code"] == "validation_error"
+
+
+async def test_profile_isolation_between_users(client: AsyncClient) -> None:
+    reg_a = await client.post(
+        "/api/auth/register",
+        json={
+            "first_name": "Алишер",
+            "last_name": "Каримов",
+            "email": "user_a@example.com",
+            "password": "password123",
+        },
+    )
+    assert reg_a.status_code == 200
+    user_a_id = reg_a.json()["id"]
+
+    reg_b = await client.post(
+        "/api/auth/register",
+        json={
+            "first_name": "Бобоҷон",
+            "last_name": "Ғафуров",
+            "email": "user_b@example.com",
+            "password": "password123",
+        },
+    )
+    assert reg_b.status_code == 200
+
+    # User B attempts to update profile (even passing user_a's id/email)
+    patch_b = await client.patch(
+        "/api/me/profile",
+        json={
+            "id": user_a_id,
+            "email": "user_a@example.com",
+            "first_name": "Хакер",
+            "last_name": "Чужой",
+        },
+    )
+    assert patch_b.status_code == 200
+    assert patch_b.json()["email"] == "user_b@example.com"
+    assert patch_b.json()["first_name"] == "Хакер"
+    assert patch_b.json()["last_name"] == "Чужой"
+
+    # Log back in as User A and verify their name was not changed
+    await client.post(
+        "/api/auth/login",
+        json={"email": "user_a@example.com", "password": "password123"},
+    )
+    me_a = await client.get("/api/auth/me")
+    assert me_a.status_code == 200
+    assert me_a.json()["first_name"] == "Алишер"
+    assert me_a.json()["last_name"] == "Каримов"
 

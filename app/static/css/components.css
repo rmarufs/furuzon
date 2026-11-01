@@ -412,13 +412,33 @@
   margin: var(--space-1) 0;
 }
 
+.menu__header {
+  padding: var(--space-2) var(--space-3);
+}
+
+.menu__user-name {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu__user-email {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .profile-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   min-height: var(--size-tap);
   max-width: 100%;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-3) 0 var(--space-2);
   border: var(--size-border) solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-surface);
@@ -430,11 +450,33 @@
   background: var(--color-surface-muted);
 }
 
+.profile-btn__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--size-logo-mark);
+  height: var(--size-logo-mark);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-link);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
 .profile-btn__name {
   min-width: 0;
+  max-width: var(--size-menu-min);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .profile-btn__name {
+    display: none;
+  }
 }
 
 /* Confirmation dialog */

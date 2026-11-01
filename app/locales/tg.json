@@ -65,6 +65,9 @@
   "mail.reset.subject": "Барқароркунии парол — Furuzon",
   "mail.reset.body": "Барои барқарор кардани парол ба пайванди зерин гузаред (1 соат эътибор дорад):\n{link}\n\nАгар шумо барқароркунии паролро дархост накарда бошед, ин номаро нодида гиред.",
 
+  "auth.first_name_label": "Ном",
+  "auth.last_name_label": "Насаб",
+  "auth.name_required": "Ном ва насабро ворид кунед.",
   "auth.email_label": "Email",
   "auth.password_label": "Парол",
   "auth.new_password_label": "Пароли нав",
@@ -96,6 +99,8 @@
   "auth.reset.login_link": "Гузаштан ба воридшавӣ",
 
   "settings.title": "Танзимоти ҳисоб",
+  "settings.profile_title": "Профил",
+  "settings.profile_saved": "Профил захира карда шуд.",
   "settings.change_password_title": "Иваз кардани парол",
   "settings.submit": "Иваз кардани парол",
   "settings.password_changed": "Парол бо муваффақият иваз карда шуд.",

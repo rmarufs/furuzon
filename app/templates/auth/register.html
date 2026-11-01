@@ -7,6 +7,18 @@
   <h1>{{ t('auth.register.title') }}</h1>
 
   <div class="field">
+    <label class="field__label" for="register-first-name">{{ t('auth.first_name_label') }}</label>
+    <input class="input" id="register-first-name" name="first_name" type="text"
+           autocomplete="given-name" maxlength="50" required>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="register-last-name">{{ t('auth.last_name_label') }}</label>
+    <input class="input" id="register-last-name" name="last_name" type="text"
+           autocomplete="family-name" maxlength="50" required>
+  </div>
+
+  <div class="field">
     <label class="field__label" for="register-email">{{ t('auth.email_label') }}</label>
     <input class="input" id="register-email" name="email" type="email" autocomplete="email" required>
   </div>

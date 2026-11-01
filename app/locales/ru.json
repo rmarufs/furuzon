@@ -65,6 +65,9 @@
   "mail.reset.subject": "Сброс пароля — Furuzon",
   "mail.reset.body": "Для сброса пароля перейдите по ссылке (действует 1 час):\n{link}\n\nЕсли вы не запрашивали сброс пароля, просто проигнорируйте это письмо.",
 
+  "auth.first_name_label": "Имя",
+  "auth.last_name_label": "Фамилия",
+  "auth.name_required": "Укажите имя и фамилию.",
   "auth.email_label": "Электронная почта",
   "auth.password_label": "Пароль",
   "auth.new_password_label": "Новый пароль",
@@ -96,6 +99,8 @@
   "auth.reset.login_link": "Перейти ко входу",
 
   "settings.title": "Настройки аккаунта",
+  "settings.profile_title": "Профиль",
+  "settings.profile_saved": "Профиль сохранён.",
   "settings.change_password_title": "Смена пароля",
   "settings.submit": "Изменить пароль",
   "settings.password_changed": "Пароль успешно изменён.",

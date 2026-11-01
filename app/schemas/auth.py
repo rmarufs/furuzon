@@ -5,8 +5,17 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, EmailStr, Field, field
 
 
 class RegisterRequest(BaseModel):
+    first_name: str = Field(min_length=1, max_length=50)
+    last_name: str = Field(min_length=1, max_length=50)
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
+
+    @field_validator("first_name", "last_name", mode="before")
+    @classmethod
+    def strip_names(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip()
+        return value
 
     @field_validator("email", mode="after")
     @classmethod
@@ -47,6 +56,18 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(min_length=8, max_length=128)
 
 
+class ProfileUpdateRequest(BaseModel):
+    first_name: str = Field(min_length=1, max_length=50)
+    last_name: str = Field(min_length=1, max_length=50)
+
+    @field_validator("first_name", "last_name", mode="before")
+    @classmethod
+    def strip_names(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip()
+        return value
+
+
 class PreferencesUpdateRequest(BaseModel):
     language: Literal["ru", "tg"] | None = None
     theme: Literal["light", "dark"] | None = None
@@ -57,6 +78,8 @@ class UserResponse(BaseModel):
 
     id: int
     email: str
+    first_name: str
+    last_name: str
     language: Literal["ru", "tg"]
     theme: Literal["light", "dark"]
     created_at: datetime
