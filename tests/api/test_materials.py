@@ -147,23 +147,23 @@ async def test_material_upload_validation_and_tree(
     g2 = await _create_group(client, "ИС-12", 1)
     g_course2 = await _create_group(client, "ИС-21", 2)
 
-    # Wrong extension -> 415 invalid_file_type
+    # Wrong extension -> 415 invalid_material_type
     r_ext = await client.post(
         "/api/materials",
         files={"file": ("virus.exe", b"MZ\x90\x00", "application/octet-stream")},
         data={"course": "1", "group_ids": f"[{g1}]"},
     )
     assert r_ext.status_code == 415
-    assert r_ext.json()["error"]["code"] == "invalid_file_type"
+    assert r_ext.json()["error"]["code"] == "invalid_material_type"
 
-    # Spoofed extension (.pdf with non-PDF bytes) -> 415 invalid_file_type
+    # Spoofed extension (.pdf with non-PDF bytes) -> 415 invalid_material_type
     r_spoof_pdf = await client.post(
         "/api/materials",
         files={"file": ("fake.pdf", b"not a pdf file", "application/pdf")},
         data={"course": "1", "group_ids": f"[{g1}]"},
     )
     assert r_spoof_pdf.status_code == 415
-    assert r_spoof_pdf.json()["error"]["code"] == "invalid_file_type"
+    assert r_spoof_pdf.json()["error"]["code"] == "invalid_material_type"
 
     # Spoofed .docx (xlsx bytes renamed to .docx, no word/document.xml) -> 415
     r_spoof_docx = await client.post(
@@ -178,7 +178,7 @@ async def test_material_upload_validation_and_tree(
         data={"course": "1", "group_ids": f"[{g1}]"},
     )
     assert r_spoof_docx.status_code == 415
-    assert r_spoof_docx.json()["error"]["code"] == "invalid_file_type"
+    assert r_spoof_docx.json()["error"]["code"] == "invalid_material_type"
 
     # File > 10 MB -> 413 file_too_large
     big_pdf = b"%PDF-1.4\n" + b"0" * (10 * 1024 * 1024 + 10)
@@ -528,3 +528,86 @@ async def test_local_storage_adapter(tmp_path: Path) -> None:
     assert s_local.STORAGE_BACKEND == "local"
     with pytest.raises(ValidationError, match="SUPABASE_URL"):
         Settings(STORAGE_BACKEND="supabase", SUPABASE_URL="", SUPABASE_SERVICE_KEY="")
+
+
+async def test_file_deleted_events_are_not_collapsed(
+    client: AsyncClient,
+) -> None:
+    await _register(client)
+    g1 = await _create_group(client, "ИС-61", 1)
+
+    # Two different files that share the same name: deleting both must
+    # produce two separate file_deleted records (no object to collapse on).
+    ids: list[int] = []
+    for idx in range(2):
+        r_up = await client.post(
+            "/api/materials",
+            files={
+                "file": (
+                    "same.pdf",
+                    _make_pdf_bytes(str(idx)),
+                    "application/pdf",
+                )
+            },
+            data={"course": "1", "group_ids": [str(g1)]},
+        )
+        assert r_up.status_code == 200
+        ids.append(r_up.json()["id"])
+
+    for mat_id in ids:
+        assert (await client.delete(f"/api/materials/{mat_id}")).status_code == 200
+
+    items = (await client.get("/api/activity?limit=10")).json()
+    deleted = [i for i in items if i["type"] == "file_deleted"]
+    assert len(deleted) == 2
+    assert all(i["object_id"] is None for i in deleted)
+
+    # Same existing object is still collapsed (DEF-2): two uploads of
+    # the same file id keep one file_uploaded record per file.
+    uploaded = [i for i in items if i["type"] == "file_uploaded"]
+    assert len(uploaded) == 2
+
+
+async def test_material_type_error_uses_material_message(
+    client: AsyncClient,
+) -> None:
+    from app.core.i18n import t
+
+    await _register(client)
+    g1 = await _create_group(client, "ИС-71", 1)
+    resp = await client.post(
+        "/api/materials",
+        files={"file": ("table.xlsx", b"PK\x03\x04", "application/octet-stream")},
+        data={"course": "1", "group_ids": f"[{g1}]"},
+    )
+    assert resp.status_code == 415
+    assert resp.json()["error"]["code"] == "invalid_material_type"
+
+    for lang in ("ru", "tg"):
+        assert "PDF" in t("errors.invalid_material_type", lang)
+        assert "xls" not in t("errors.invalid_material_type", lang)
+        assert "xls" in t("errors.invalid_file_type", lang)
+
+
+async def test_materials_page_access_and_states(
+    client: AsyncClient,
+) -> None:
+    guest = await client.get("/materials")
+    assert guest.status_code == 302
+    assert guest.headers["location"] == "/login"
+
+    await _register(client)
+
+    # No groups yet: message with a link instead of the form and the tree
+    no_groups = await client.get("/materials")
+    assert no_groups.status_code == 200
+    assert 'href="/groups/new"' in no_groups.text
+    assert "data-upload-form" not in no_groups.text
+    assert "data-tree" not in no_groups.text
+
+    await _create_group(client, "ИС-81", 1)
+    with_groups = await client.get("/materials")
+    assert with_groups.status_code == 200
+    assert "data-upload-form" in with_groups.text
+    assert "data-tree" in with_groups.text
+    assert "/static/js/pages/materials.js" in with_groups.text

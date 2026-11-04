@@ -48,6 +48,7 @@
   "errors.invalid_or_expired_token": "Ссылка для сброса пароля недействительна или устарела.",
   "errors.wrong_current_password": "Неверный текущий пароль.",
   "errors.invalid_file_type": "Неподдерживаемый формат файла. Загрузите файл .xlsx или .xls.",
+  "errors.invalid_material_type": "Неподдерживаемый формат файла. Загрузите файл PDF, DOC или DOCX.",
   "errors.file_too_large": "Файл слишком большой. Максимальный размер — 10 МБ.",
   "errors.excel_empty": "В файле нет данных.",
   "errors.excel_too_large": "В таблице слишком много строк (более 2000) или колонок (более 50).",
@@ -249,5 +250,74 @@
 
   "groups.columns_modal.title": "Колонки таблицы",
   "groups.columns_modal.last_col_hint": "Нельзя убрать единственную оставшуюся колонку.",
-  "groups.columns_modal.removed_toast": "Колонка удалена"
+  "groups.columns_modal.removed_toast": "Колонка удалена",
+
+  "materials.title": "Раздаточные материалы",
+  "materials.no_groups.text": "Чтобы загружать материалы, сначала создайте хотя бы одну группу.",
+  "materials.no_groups.action": "Создать группу",
+
+  "materials.upload.title": "Загрузить файл",
+  "materials.upload.file_label": "Файл",
+  "materials.upload.file_hint": "PDF, DOC или DOCX, не больше 10 МБ",
+  "materials.upload.choose_file": "Выбрать файл",
+  "materials.upload.no_file": "Файл не выбран",
+  "materials.upload.course_label": "Курс",
+  "materials.upload.groups_label": "Группы",
+  "materials.upload.groups_hint": "Отметьте одну или несколько групп этого курса",
+  "materials.upload.pick_course": "Сначала выберите курс",
+  "materials.upload.no_groups_course": "На этом курсе пока нет групп",
+  "materials.upload.success": "Файл загружен",
+
+  "materials.error.no_file": "Выберите файл.",
+  "materials.error.no_course": "Выберите курс.",
+  "materials.error.no_groups": "Отметьте хотя бы одну группу.",
+
+  "materials.tree.title": "Файлы по группам",
+  "materials.tree.course": "{n} курс",
+  "materials.tree.empty_course": "На этом курсе пока нет групп",
+  "materials.tree.empty_group": "В этой группе пока нет файлов",
+
+  "materials.groups_count.one": "{n} группа",
+  "materials.groups_count.few": "{n} группы",
+  "materials.groups_count.many": "{n} групп",
+  "materials.groups_count.other": "{n} групп",
+  "materials.files_count.one": "{n} файл",
+  "materials.files_count.few": "{n} файла",
+  "materials.files_count.many": "{n} файлов",
+  "materials.files_count.other": "{n} файлов",
+
+  "materials.size.b": "{n} Б",
+  "materials.size.kb": "{n} КБ",
+  "materials.size.mb": "{n} МБ",
+  "materials.file.uploaded": "Загружен {date}",
+  "materials.file.qr_aria": "QR-код файла {name}",
+
+  "materials.menu.replace": "Заменить файл",
+  "materials.menu.remove_from_group": "Убрать из группы",
+  "materials.menu.delete": "Удалить полностью",
+
+  "materials.qr.title": "QR-код файла",
+  "materials.qr.alt": "QR-код для скачивания файла {name}",
+  "materials.qr.link_label": "Публичная ссылка",
+  "materials.qr.copy": "Копировать ссылку",
+  "materials.qr.copied": "Ссылка скопирована",
+  "materials.qr.copy_failed": "Не удалось скопировать. Выделите ссылку и скопируйте вручную.",
+  "materials.qr.download": "Скачать QR",
+
+  "materials.replace.title": "Заменить файл?",
+  "materials.replace.warning": "Старый QR-код и ссылка перестанут работать. Новый QR-код нужно будет раздать студентам заново.",
+  "materials.replace.choose_file": "Выбрать новый файл",
+  "materials.replace.confirm": "Заменить",
+  "materials.replace.success": "Файл заменён",
+  "materials.replace.new_qr_title": "Новый QR-код",
+
+  "materials.remove.title": "Убрать файл из группы?",
+  "materials.remove.text": "Файл «{name}» исчезнет из группы {group}. В других группах он останется, QR-код продолжит работать.",
+  "materials.remove.text_last": "Это последняя группа файла «{name}». Файл и его QR-код будут удалены безвозвратно.",
+  "materials.remove.confirm": "Да, убрать",
+  "materials.remove.success": "Файл убран из группы",
+
+  "materials.delete.title": "Удалить файл полностью?",
+  "materials.delete.text": "Файл «{name}» будет удалён из всех групп вместе с QR-кодом. Действие нельзя отменить.",
+  "materials.delete.success": "Файл удалён"
 }

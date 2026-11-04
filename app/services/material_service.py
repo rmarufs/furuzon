@@ -36,35 +36,35 @@ def validate_material_file(data: bytes, filename: str) -> tuple[str, str]:
     clean_name = Path(filename or "").name.strip()
     ext = Path(clean_name).suffix.lower()
     if ext not in CONTENT_TYPES_BY_EXT or not clean_name:
-        raise AppError("invalid_file_type", status_code=415)
+        raise AppError("invalid_material_type", status_code=415)
 
     if len(data) > MAX_MATERIAL_SIZE_BYTES:
         raise AppError("file_too_large", status_code=413)
 
     if len(data) == 0:
-        raise AppError("invalid_file_type", status_code=415)
+        raise AppError("invalid_material_type", status_code=415)
 
     if ext == ".pdf":
         if not data.startswith(PDF_SIGNATURE):
-            raise AppError("invalid_file_type", status_code=415)
+            raise AppError("invalid_material_type", status_code=415)
     elif ext == ".doc":
         if not data.startswith(OLE_SIGNATURE):
-            raise AppError("invalid_file_type", status_code=415)
+            raise AppError("invalid_material_type", status_code=415)
     elif ext == ".docx":
         if not data.startswith(ZIP_SIGNATURE):
-            raise AppError("invalid_file_type", status_code=415)
+            raise AppError("invalid_material_type", status_code=415)
         try:
             with zipfile.ZipFile(io.BytesIO(data)) as archive:
                 names = set(archive.namelist())
                 if DOCX_DOCUMENT_ENTRY not in names:
-                    raise AppError("invalid_file_type", status_code=415)
+                    raise AppError("invalid_material_type", status_code=415)
                 total_unpacked = sum(
                     info.file_size for info in archive.infolist()
                 )
                 if total_unpacked > MAX_DOCX_UNPACKED_BYTES:
                     raise AppError("file_too_large", status_code=413)
         except zipfile.BadZipFile as exc:
-            raise AppError("invalid_file_type", status_code=415) from exc
+            raise AppError("invalid_material_type", status_code=415) from exc
 
     return clean_name[:255], CONTENT_TYPES_BY_EXT[ext]
 

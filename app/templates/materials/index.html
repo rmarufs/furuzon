@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon %}
+
+{% block title %}{{ t('materials.title') }} — {{ t('app.name') }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/groups.css">
+<link rel="stylesheet" href="/static/css/pages/materials.css">
+{% endblock %}
+
+{% block content %}
+<div class="stack stack--lg" data-materials-page>
+  <header class="page-header">
+    <h1>{{ t('materials.title') }}</h1>
+  </header>
+
+  {% if not has_groups %}
+  <div class="card empty">
+    <span class="empty__icon">{{ icon('groups', 'icon--lg') }}</span>
+    <p>{{ t('materials.no_groups.text') }}</p>
+    <a class="btn btn--primary" href="/groups/new">
+      {{ icon('plus') }}<span>{{ t('materials.no_groups.action') }}</span>
+    </a>
+  </div>
+  {% else %}
+  <section class="card stack" aria-labelledby="upload-heading">
+    <h2 id="upload-heading">{{ t('materials.upload.title') }}</h2>
+
+    <form class="stack" data-upload-form novalidate>
+      <div class="field">
+        <label class="field__label" for="material-file-input">{{ t('materials.upload.file_label') }}</label>
+        <div class="file-picker">
+          <input
+            class="visually-hidden"
+            id="material-file-input"
+            type="file"
+            accept=".pdf,.doc,.docx"
+            data-file-input
+          >
+          <label class="btn btn--secondary" for="material-file-input">
+            {{ icon('plus') }}<span>{{ t('materials.upload.choose_file') }}</span>
+          </label>
+          <span class="file-picker__name text-muted" data-file-name>{{ t('materials.upload.no_file') }}</span>
+        </div>
+        <p class="text-small text-muted">{{ t('materials.upload.file_hint') }}</p>
+      </div>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset__legend">{{ t('materials.upload.course_label') }}</legend>
+        <div class="chips" data-course-chips>
+          {% for n in range(1, 7) %}
+          <label class="chip">
+            <input class="chip__input" type="radio" name="course" value="{{ n }}" data-course-radio>
+            <span class="chip__face">{{ t('groups.course_chip', n=n) }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset__legend">{{ t('materials.upload.groups_label') }}</legend>
+        <p class="text-small text-muted">{{ t('materials.upload.groups_hint') }}</p>
+        <div class="group-checks" data-group-checks></div>
+        <p class="text-muted" data-groups-placeholder>{{ t('materials.upload.pick_course') }}</p>
+      </fieldset>
+
+      <p class="field__error" data-upload-error role="alert" hidden></p>
+
+      <div>
+        <button type="submit" class="btn btn--primary" data-upload-submit>
+          {{ t('common.upload') }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="stack" aria-labelledby="tree-heading">
+    <h2 id="tree-heading">{{ t('materials.tree.title') }}</h2>
+    <div class="stack" data-tree></div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if has_groups %}
+<script type="module" src="/static/js/pages/materials.js"></script>
+{% endif %}
+{% endblock %}

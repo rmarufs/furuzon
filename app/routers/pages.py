@@ -11,7 +11,7 @@ from app.core.exceptions import AppError
 from app.core.i18n import get_lang, get_messages, normalize_lang
 from app.models.user import User
 from app.services import activity_service
-from app.services.group_service import get_owned_group_or_404
+from app.services.group_service import get_owned_group_or_404, list_groups
 
 router = APIRouter()
 
@@ -208,6 +208,28 @@ async def group_detail_page(
             user=user,
             active_nav="groups",
             group=group,
+        ),
+    )
+
+
+@router.get("/materials", response_class=HTMLResponse)
+async def materials_page(
+    request: Request,
+    user: Annotated[User | None, Depends(get_current_user_optional)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> Response:
+    if user is None:
+        return RedirectResponse(url="/login", status_code=302)
+    groups = await list_groups(session, owner_id=user.id)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request,
+        "materials/index.html",
+        base_context(
+            request,
+            user=user,
+            active_nav="materials",
+            has_groups=len(groups) > 0,
         ),
     )
 

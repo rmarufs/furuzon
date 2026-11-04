@@ -15,21 +15,32 @@ async def record_activity(
     object_id: int | None,
     object_title: str,
 ) -> Activity:
+    now = datetime.now(UTC)
+
+    # Events without an object (e.g. a deleted file) are never collapsed:
+    # DEF-2 collapses repeats only for the same existing object.
+    if object_id is None:
+        item = Activity(
+            owner_id=owner_id,
+            type=action_type,
+            object_type=object_type,
+            object_id=None,
+            object_title=object_title,
+            created_at=now,
+        )
+        session.add(item)
+        await session.flush()
+        await session.refresh(item)
+        return item
+
     stmt = select(Activity).where(
         Activity.owner_id == owner_id,
         Activity.type == action_type,
         Activity.object_type == object_type,
+        Activity.object_id == object_id,
     )
-    if object_id is not None:
-        stmt = stmt.where(Activity.object_id == object_id)
-    else:
-        stmt = stmt.where(
-            Activity.object_id.is_(None),
-            Activity.object_title == object_title,
-        )
 
     existing = await session.scalar(stmt.order_by(Activity.created_at.desc()))
-    now = datetime.now(UTC)
     if existing is not None:
         existing.object_title = object_title
         existing.created_at = now

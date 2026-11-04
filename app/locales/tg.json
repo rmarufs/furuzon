@@ -48,6 +48,7 @@
   "errors.invalid_or_expired_token": "Пайванди барқароркунии парол нодуруст аст ё муҳлаташ гузаштааст.",
   "errors.wrong_current_password": "Пароли ҷорӣ нодуруст аст.",
   "errors.invalid_file_type": "Формати файл дастгирӣ намешавад. Файли .xlsx ё .xls-ро бор кунед.",
+  "errors.invalid_material_type": "Формати файл дастгирӣ намешавад. Файли PDF, DOC ё DOCX-ро бор кунед.",
   "errors.file_too_large": "Ҳаҷми файл аз ҳад калон аст. Ҳаҷми ниҳоӣ — 10 МБ.",
   "errors.excel_empty": "Дар файл маълумот нест.",
   "errors.excel_too_large": "Дар ҷадвал сатрҳо (зиёда аз 2000) ё сутунҳо (зиёда аз 50) аз ҳад зиёданд.",
@@ -246,5 +247,68 @@
 
   "groups.columns_modal.title": "Сутунҳои ҷадвал",
   "groups.columns_modal.last_col_hint": "Ягона сутуни боқимондаро гирифтан мумкин нест.",
-  "groups.columns_modal.removed_toast": "Сутун нест карда шуд"
+  "groups.columns_modal.removed_toast": "Сутун нест карда шуд",
+
+  "materials.title": "Маводи тақсимотӣ",
+  "materials.no_groups.text": "Барои бор кардани мавод аввал ҳадди ақал як гурӯҳ созед.",
+  "materials.no_groups.action": "Сохтани гурӯҳ",
+
+  "materials.upload.title": "Бор кардани файл",
+  "materials.upload.file_label": "Файл",
+  "materials.upload.file_hint": "PDF, DOC ё DOCX, на зиёда аз 10 МБ",
+  "materials.upload.choose_file": "Интихоби файл",
+  "materials.upload.no_file": "Файл интихоб нашудааст",
+  "materials.upload.course_label": "Курс",
+  "materials.upload.groups_label": "Гурӯҳҳо",
+  "materials.upload.groups_hint": "Як ё якчанд гурӯҳи ин курсро қайд кунед",
+  "materials.upload.pick_course": "Аввал курсро интихоб кунед",
+  "materials.upload.no_groups_course": "Дар ин курс ҳоло гурӯҳ нест",
+  "materials.upload.success": "Файл бор карда шуд",
+
+  "materials.error.no_file": "Файлро интихоб кунед.",
+  "materials.error.no_course": "Курсро интихоб кунед.",
+  "materials.error.no_groups": "Ҳадди ақал як гурӯҳро қайд кунед.",
+
+  "materials.tree.title": "Файлҳо аз рӯи гурӯҳҳо",
+  "materials.tree.course": "Курси {n}",
+  "materials.tree.empty_course": "Дар ин курс ҳоло гурӯҳ нест",
+  "materials.tree.empty_group": "Дар ин гурӯҳ ҳоло файл нест",
+
+  "materials.groups_count.other": "{n} гурӯҳ",
+  "materials.files_count.other": "{n} файл",
+
+  "materials.size.b": "{n} Б",
+  "materials.size.kb": "{n} КБ",
+  "materials.size.mb": "{n} МБ",
+  "materials.file.uploaded": "Бор карда шуд: {date}",
+  "materials.file.qr_aria": "QR-коди файли {name}",
+
+  "materials.menu.replace": "Иваз кардани файл",
+  "materials.menu.remove_from_group": "Аз гурӯҳ гирифтан",
+  "materials.menu.delete": "Пурра нест кардан",
+
+  "materials.qr.title": "QR-коди файл",
+  "materials.qr.alt": "QR-код барои зеркашии файли {name}",
+  "materials.qr.link_label": "Пайванди оммавӣ",
+  "materials.qr.copy": "Нусхабардории пайванд",
+  "materials.qr.copied": "Пайванд нусха шуд",
+  "materials.qr.copy_failed": "Нусха кардан муяссар нашуд. Пайвандро интихоб карда, дастӣ нусха кунед.",
+  "materials.qr.download": "Зеркашии QR",
+
+  "materials.replace.title": "Файл иваз карда шавад?",
+  "materials.replace.warning": "QR-коди кӯҳна ва пайванд кор намекунанд. QR-коди навро бояд ба донишҷӯён аз нав тақсим кунед.",
+  "materials.replace.choose_file": "Интихоби файли нав",
+  "materials.replace.confirm": "Иваз кардан",
+  "materials.replace.success": "Файл иваз карда шуд",
+  "materials.replace.new_qr_title": "QR-коди нав",
+
+  "materials.remove.title": "Файл аз гурӯҳ гирифта шавад?",
+  "materials.remove.text": "Файли «{name}» аз гурӯҳи {group} нест мешавад. Дар гурӯҳҳои дигар мемонад, QR-код кор карданро давом медиҳад.",
+  "materials.remove.text_last": "Ин гурӯҳи охирини файли «{name}» аст. Файл ва QR-коди он бебозгашт нест карда мешаванд.",
+  "materials.remove.confirm": "Ҳа, гирифта шавад",
+  "materials.remove.success": "Файл аз гурӯҳ гирифта шуд",
+
+  "materials.delete.title": "Файл пурра нест карда шавад?",
+  "materials.delete.text": "Файли «{name}» аз ҳамаи гурӯҳҳо бо QR-код якҷоя нест карда мешавад. Амалро бозгардондан мумкин нест.",
+  "materials.delete.success": "Файл нест карда шуд"
 }
