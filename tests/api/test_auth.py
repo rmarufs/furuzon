@@ -7,6 +7,7 @@ from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import mailer
+from app.core.config import settings
 from app.models.user import PasswordResetToken
 
 
@@ -197,6 +198,8 @@ async def test_forgot_and_reset_password_flow(
     async def fake_send_email(to: str, subject: str, body: str) -> None:
         sent_emails.append((to, subject, body))
 
+    monkeypatch.setattr(settings, "MAIL_BACKEND", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "localhost")
     monkeypatch.setattr(mailer, "send_email", fake_send_email)
 
     await client.post(
@@ -283,6 +286,8 @@ async def test_reset_password_expired_and_unknown_token(
     async def fake_send_email(to: str, subject: str, body: str) -> None:
         sent_emails.append((to, subject, body))
 
+    monkeypatch.setattr(settings, "MAIL_BACKEND", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "localhost")
     monkeypatch.setattr(mailer, "send_email", fake_send_email)
 
     await client.post(
@@ -384,6 +389,8 @@ async def test_reset_password_token_cannot_be_reused(
     async def fake_send_email(to: str, subject: str, body: str) -> None:
         sent_emails.append((to, subject, body))
 
+    monkeypatch.setattr(settings, "MAIL_BACKEND", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "localhost")
     monkeypatch.setattr(mailer, "send_email", fake_send_email)
 
     await client.post(
@@ -427,6 +434,8 @@ async def test_forgot_password_nonexistent_email_same_response_and_no_mail(
     async def fake_send_email(to: str, subject: str, body: str) -> None:
         sent_emails.append((to, subject, body))
 
+    monkeypatch.setattr(settings, "MAIL_BACKEND", "smtp")
+    monkeypatch.setattr(settings, "SMTP_HOST", "localhost")
     monkeypatch.setattr(mailer, "send_email", fake_send_email)
 
     await client.post(
@@ -454,6 +463,54 @@ async def test_forgot_password_nonexistent_email_same_response_and_no_mail(
     assert existing_res.status_code == missing_res.status_code
     assert existing_res.json() == missing_res.json()
     assert len(sent_emails) == 1
+
+
+async def test_forgot_password_when_smtp_not_configured(
+    client: AsyncClient,
+    db_session: AsyncSession,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sent_emails: list[tuple[str, str, str]] = []
+
+    async def fake_send_email(to: str, subject: str, body: str) -> None:
+        sent_emails.append((to, subject, body))
+
+    monkeypatch.setattr(settings, "MAIL_BACKEND", "console")
+    monkeypatch.setattr(mailer, "send_email", fake_send_email)
+
+    await client.post(
+        "/api/auth/register",
+        json={
+            "first_name": "Иван",
+            "last_name": "Петров",
+            "email": "nosmtp@example.com",
+            "password": "password123",
+        },
+    )
+    await client.post("/api/auth/logout")
+
+    # Forgot password page shows admin contact message instead of the form
+    page_ru = await client.get("/forgot-password")
+    assert page_ru.status_code == 200
+    assert "Для сброса пароля обратитесь к администратору." in page_ru.text
+    assert 'data-auth-form="forgot"' not in page_ru.text
+
+    client.cookies.set("lang", "tg")
+    page_tg = await client.get("/forgot-password")
+    assert page_tg.status_code == 200
+    assert "Барои барқарор кардани парол ба администратор муроҷиат кунед." in page_tg.text
+
+    # API request does not fail and does not simulate sending / creating reset tokens
+    resp = await client.post(
+        "/api/auth/forgot-password",
+        json={"email": "nosmtp@example.com"},
+    )
+    assert resp.status_code == 200
+    assert sent_emails == []
+    from sqlalchemy import select
+
+    tokens = list((await db_session.scalars(select(PasswordResetToken))).all())
+    assert tokens == []
 
 
 async def test_update_profile_and_validation(client: AsyncClient) -> None:

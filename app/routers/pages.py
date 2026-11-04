@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
+from app.core.config import settings
 from app.core.database import get_session
 from app.core.deps import get_current_user_optional
 from app.core.exceptions import AppError
@@ -119,7 +120,7 @@ async def forgot_password_page(
     return templates.TemplateResponse(
         request,
         "auth/forgot_password.html",
-        base_context(request),
+        base_context(request, smtp_configured=settings.is_smtp_configured),
     )
 
 

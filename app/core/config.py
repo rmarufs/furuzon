@@ -57,5 +57,9 @@ class Settings(BaseSettings):
                 )
         return self
 
+    @property
+    def is_smtp_configured(self) -> bool:
+        return self.MAIL_BACKEND == "smtp" and bool(self.SMTP_HOST.strip())
+
 
 settings = Settings()

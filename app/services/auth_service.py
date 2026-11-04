@@ -80,6 +80,9 @@ async def request_password_reset(
     *,
     email: str,
 ) -> None:
+    if not settings.is_smtp_configured:
+        return
+
     normalized_email = email.strip().lower()
     user = await session.scalar(
         select(User).where(User.email == normalized_email)
