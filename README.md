@@ -1,6 +1,6 @@
 # Фурузон — личный кабинет преподавателя
 
-[![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/<repo>/actions/workflows/ci.yml)
+[![CI](https://github.com/rmarufs/furuzon/actions/workflows/ci.yml/badge.svg)](https://github.com/rmarufs/furuzon/actions/workflows/ci.yml)
 
 Веб-сайт для преподавателей: загрузка списков групп из Excel, работа с таблицами студентов и раздача учебных материалов студентам по QR-коду.
 
