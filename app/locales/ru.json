@@ -54,6 +54,7 @@
   "errors.invalid_header_row": "Выбрана неверная строка заголовка.",
   "errors.invalid_columns": "Неверно выбраны колонки таблицы.",
   "errors.group_not_found": "Группа не найдена.",
+  "errors.material_not_found": "Файл не найден.",
   "errors.student_not_found": "Студент не найден.",
   "errors.student_empty": "Заполните хотя бы одно поле студента.",
   "errors.cannot_delete_last_column": "Нельзя удалить последнюю колонку таблицы.",
@@ -226,6 +227,9 @@
   "error_page.404.title": "Страница не найдена",
   "error_page.404.text": "Запрашиваемая страница не существует или недоступна.",
   "error_page.404.back_to_groups": "К списку групп",
+
+  "public_file.not_found.title": "Файл не найден",
+  "public_file.not_found.text": "Файл был удалён или ссылка недействительна.",
 
   "groups.detail.back": "К списку групп",
   "groups.detail.add_student": "Добавить студента",

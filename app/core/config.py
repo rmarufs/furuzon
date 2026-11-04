@@ -1,6 +1,6 @@
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     UPLOADS_DIR: str = "uploads"
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_KEY: str = ""
-    SUPABASE_BUCKET: str = ""
+    SUPABASE_BUCKET: str = "furuzon"
 
     MAIL_BACKEND: Literal["console", "smtp"] = "console"
     SMTP_HOST: str = "localhost"
@@ -37,6 +37,25 @@ class Settings(BaseSettings):
         if value == "" or value is None:
             return 587
         return value
+
+    @model_validator(mode="after")
+    def validate_storage_settings(self) -> Self:
+        if self.STORAGE_BACKEND == "supabase":
+            missing = [
+                name
+                for name, val in (
+                    ("SUPABASE_URL", self.SUPABASE_URL),
+                    ("SUPABASE_SERVICE_KEY", self.SUPABASE_SERVICE_KEY),
+                    ("SUPABASE_BUCKET", self.SUPABASE_BUCKET),
+                )
+                if not str(val).strip()
+            ]
+            if missing:
+                vars_list = ", ".join(missing)
+                raise ValueError(
+                    f"STORAGE_BACKEND=supabase requires {vars_list} to be set"
+                )
+        return self
 
 
 settings = Settings()

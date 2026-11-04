@@ -10,6 +10,7 @@ from app.core.deps import get_current_user_optional
 from app.core.exceptions import AppError
 from app.core.i18n import get_lang, get_messages, normalize_lang
 from app.models.user import User
+from app.services import activity_service
 from app.services.group_service import get_owned_group_or_404
 
 router = APIRouter()
@@ -191,6 +192,14 @@ async def group_detail_page(
             base_context(request, user=user, active_nav="groups"),
             status_code=404,
         )
+    await activity_service.record_activity(
+        session,
+        owner_id=user.id,
+        action_type="group_viewed",
+        object_type="group",
+        object_id=group.id,
+        object_title=group.number,
+    )
     return templates.TemplateResponse(
         request,
         "groups/detail.html",

@@ -25,6 +25,7 @@ from app.services.excel.exporter import (
     build_content_disposition,
 )
 from app.services.excel.reader import MAX_FILE_SIZE_BYTES
+from app.storage import Storage, get_storage
 
 router = APIRouter(prefix="/api", tags=["groups"])
 
@@ -145,11 +146,13 @@ async def delete_group(
     group_id: int,
     user: Annotated[User, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[Storage, Depends(get_storage)],
 ) -> StatusResponse:
     await group_service.delete_group(
         session,
         group_id=group_id,
         owner_id=user.id,
+        storage=storage,
     )
     return StatusResponse()
 

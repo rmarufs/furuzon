@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import icon, logo %}
+
+{% block title %}{{ title_ru }} / {{ title_tg }} — {{ t('app.name') }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/pages/auth.css">
+{% endblock %}
+
+{% block body %}
+<main id="main" class="auth-layout">
+  <div class="auth-container">
+    <div class="auth-topbar">
+      <span class="brand">{{ logo() }}<span>{{ t('app.name') }}</span></span>
+    </div>
+
+    <div class="card auth-card empty">
+      <span class="empty__icon">{{ icon('alert', 'icon--lg') }}</span>
+      <h1 lang="ru">{{ title_ru }}</h1>
+      <p class="text-muted" lang="ru">{{ text_ru }}</p>
+      <hr>
+      <h2 lang="tg">{{ title_tg }}</h2>
+      <p class="text-muted" lang="tg">{{ text_tg }}</p>
+    </div>
+  </div>
+</main>
+{% endblock %}

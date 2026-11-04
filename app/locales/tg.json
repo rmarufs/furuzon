@@ -54,6 +54,7 @@
   "errors.invalid_header_row": "Сатри сарлавҳа нодуруст интихоб шудааст.",
   "errors.invalid_columns": "Сутунҳои ҷадвал нодуруст интихоб шудаанд.",
   "errors.group_not_found": "Гурӯҳ ёфт нашуд.",
+  "errors.material_not_found": "Файл ёфт нашуд.",
   "errors.student_not_found": "Донишҷӯ ёфт нашуд.",
   "errors.student_empty": "Ҳадди ақал як майдони донишҷӯро пур кунед.",
   "errors.cannot_delete_last_column": "Сутуни охирини ҷадвалро нест кардан мумкин нест.",
@@ -223,6 +224,9 @@
   "error_page.404.title": "Саҳифа ёфт нашуд",
   "error_page.404.text": "Саҳифаи дархостшуда вуҷуд надорад ё дастнорас аст.",
   "error_page.404.back_to_groups": "Ба рӯйхати гурӯҳҳо",
+
+  "public_file.not_found.title": "Файл ёфт нашуд",
+  "public_file.not_found.text": "Файл нест карда шудааст ё пайванд беэътибор аст.",
 
   "groups.detail.back": "Ба рӯйхати гурӯҳҳо",
   "groups.detail.add_student": "Илова кардани донишҷӯ",

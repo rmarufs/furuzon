@@ -69,7 +69,7 @@ furuzon/
    ```bash
    pip install -r requirements.txt
    ```
-4. Создать файл `.env` на основе примера (`.env.example`, если он есть) и заполнить: параметры БД, ключи Supabase Storage, SMTP для писем сброса пароля, секретный ключ.
+4. Создать файл `.env` на основе `.env.example` и заполнить параметры БД и секретный ключ. Локально загруженные файлы сохраняются в папку `UPLOADS_DIR` (`STORAGE_BACKEND=local`); для деплоя хранилище переключается на Supabase через переменные `STORAGE_BACKEND=supabase` и `SUPABASE_*` в `.env`.
 5. Применить миграции:
    ```bash
    alembic upgrade head

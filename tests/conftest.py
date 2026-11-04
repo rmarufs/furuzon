@@ -14,6 +14,31 @@ import app.models  # noqa: F401
 from app.core.config import settings
 from app.core.database import Base, get_session
 from app.main import app
+from app.storage import Storage, get_storage
+
+
+class FakeStorage(Storage):
+    def __init__(self) -> None:
+        self.files: dict[str, tuple[bytes, str]] = {}
+
+    async def save(self, key: str, data: bytes, content_type: str) -> None:
+        self.files[key] = (data, content_type)
+
+    async def read(self, key: str) -> bytes:
+        if key not in self.files:
+            raise FileNotFoundError(key)
+        return self.files[key][0]
+
+    async def delete(self, key: str) -> None:
+        self.files.pop(key, None)
+
+    async def exists(self, key: str) -> bool:
+        return key in self.files
+
+
+@pytest.fixture
+def fake_storage() -> FakeStorage:
+    return FakeStorage()
 
 
 @pytest.fixture
@@ -52,6 +77,7 @@ async def db_session(
 @pytest.fixture
 async def client(
     test_engine: AsyncEngine,
+    fake_storage: FakeStorage,
 ) -> AsyncGenerator[AsyncClient, None]:
     session_maker = async_sessionmaker(
         test_engine,
@@ -69,6 +95,7 @@ async def client(
                 raise
 
     app.dependency_overrides[get_session] = override_get_session
+    app.dependency_overrides[get_storage] = lambda: fake_storage
 
     transport = ASGITransport(app=app, raise_app_exceptions=False)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:

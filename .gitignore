@@ -8,6 +8,5 @@ __pycache__/
 .vscode
 test-results/
 playwright-report/
-uploads/*
-!uploads/.gitkeep
+uploads/
 tests/fixtures/private/

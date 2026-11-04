@@ -7,10 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import AppError
 from app.models.group import Group, Student
-from app.services import student_search
+from app.models.material import FileGroup
+from app.services import activity_service, material_service, student_search
 from app.services.excel.exporter import export_group_to_xlsx, sanitize_group_filename
 from app.services.excel.reader import read_workbook
 from app.services.excel.table import PreviewData, build_preview, build_table
+from app.storage.base import Storage
 
 
 async def get_owned_group_or_404(
@@ -271,14 +273,39 @@ async def delete_group(
     *,
     group_id: int,
     owner_id: int,
+    storage: Storage | None = None,
 ) -> None:
     group = await get_owned_group_or_404(
         session,
         group_id=group_id,
         owner_id=owner_id,
     )
+    linked_file_ids = list(
+        (
+            await session.scalars(
+                select(FileGroup.file_id).where(FileGroup.group_id == group.id)
+            )
+        ).all()
+    )
     await session.delete(group)
     await session.flush()
+
+    await activity_service.delete_group_activity(
+        session,
+        owner_id=owner_id,
+        group_id=group_id,
+    )
+
+    if linked_file_ids:
+        from app.storage import get_storage
+
+        active_storage = storage if storage is not None else get_storage()
+        await material_service.cleanup_orphan_files_for_ids(
+            session,
+            active_storage,
+            owner_id=owner_id,
+            candidate_file_ids=linked_file_ids,
+        )
 
 
 async def add_student(
