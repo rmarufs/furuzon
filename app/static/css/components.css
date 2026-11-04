@@ -265,15 +265,6 @@
   font-size: var(--font-size-small);
 }
 
-.card--archived {
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-
-.card--archived .card__title {
-  color: var(--color-text-muted);
-}
-
 /* Badge */
 .badge {
   display: inline-flex;
@@ -302,36 +293,6 @@
 .badge--danger {
   background: var(--color-danger-soft);
   color: var(--color-danger-text);
-}
-
-/* Progress */
-.progress {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.progress__track {
-  height: var(--size-progress);
-  border-radius: var(--radius-full);
-  background: var(--color-surface-muted);
-  overflow: hidden;
-}
-
-.card--archived .progress__track {
-  background: var(--color-border);
-}
-
-.progress__bar {
-  width: var(--value, 0%);
-  height: 100%;
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-}
-
-.progress__text {
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium);
 }
 
 /* Dropdown menu */
@@ -738,7 +699,7 @@
   }
 
   .home-welcome__grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

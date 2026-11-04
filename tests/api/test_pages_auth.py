@@ -63,9 +63,12 @@ async def test_auth_pages_redirect_to_home_when_authenticated(
     bottom_nav_end = home_res.text.index("</nav>", bottom_nav_start)
     bottom_nav_html = home_res.text[bottom_nav_start:bottom_nav_end]
     pos_materials = bottom_nav_html.index('href="/materials"')
-    pos_sheets = bottom_nav_html.index('href="/sheets"')
     pos_groups = bottom_nav_html.index('href="/groups"')
-    assert pos_materials < pos_sheets < pos_groups
+    assert pos_materials < pos_groups
+    assert 'href="/sheets"' not in home_res.text
+
+    not_found_res = await client.get("/sheets", follow_redirects=False)
+    assert not_found_res.status_code == 404
 
     settings_res = await client.get("/settings", follow_redirects=False)
     assert settings_res.status_code == 200

@@ -2,10 +2,6 @@ import { confirmDialog } from "../core/modal.js";
 import { t } from "../core/i18n.js";
 import { showToast } from "../core/toast.js";
 
-for (const bar of document.querySelectorAll(".progress__bar[data-value]")) {
-  bar.style.setProperty("--value", `${bar.dataset.value}%`);
-}
-
 document.addEventListener("click", async (event) => {
   const trigger = event.target.closest("[data-demo]");
   if (!trigger) {

@@ -5,7 +5,6 @@
   "nav.skip_to_content": "Перейти к содержимому",
   "nav.home": "Главная",
   "nav.groups": "Мои группы",
-  "nav.sheets": "Учёт работ",
   "nav.materials": "Раздаточные материалы",
 
   "profile.name_placeholder": "Преподаватель",
@@ -28,7 +27,6 @@
   "common.edit": "Изменить",
   "common.add": "Добавить",
   "common.search": "Поиск",
-  "common.archive": "Архив",
   "common.download_excel": "Скачать Excel",
   "common.qr": "QR",
   "common.loading": "Загрузка…",
@@ -107,12 +105,10 @@
 
   "home.title": "Главная",
   "home.welcome": "Добро пожаловать в личный кабинет преподавателя",
-  "home.subtitle": "Управляйте группами, отмечайте сдачу работ и делитесь материалами по QR-коду.",
+  "home.subtitle": "Управляйте списками групп из Excel и делитесь учебными материалами со студентами по QR-коду.",
   "home.create_first_group": "Создать первую группу",
   "home.feature_groups_title": "Мои группы",
   "home.feature_groups_desc": "Загружайте списки студентов из Excel и редактируйте их прямо на сайте.",
-  "home.feature_sheets_title": "Учёт работ",
-  "home.feature_sheets_desc": "Отмечайте в один клик, кто из студентов какие задания уже сдал.",
   "home.feature_materials_title": "Раздаточные материалы",
   "home.feature_materials_desc": "Загружайте файлы для групп и показывайте QR-код для скачивания на занятии.",
 
@@ -137,14 +133,13 @@
   "ui.btn.loading": "Загрузка",
 
   "ui.field.label": "Номер группы",
-  "ui.field.error_label": "Название листа",
-  "ui.field.error_message": "Введите название листа",
+  "ui.field.error_label": "Номер группы",
+  "ui.field.error_message": "Введите номер группы",
 
   "ui.course.label": "Курс",
 
   "ui.sample.group_number": "ИС-21",
   "ui.sample.date": "12.10.2026",
-  "ui.sample.sheet_title": "Контрольная работа 1",
   "ui.sample.student_1": "Иванов И.",
   "ui.sample.student_2": "Петрова А.",
   "ui.sample.student_3": "Сидоров К.",
@@ -152,18 +147,14 @@
   "ui.card.course": "{n} курс",
   "ui.card.students": "{n} студентов",
   "ui.card.modified": "Изменено {date}",
-  "ui.card.sheet_meta": "Группа {group}, {n} курс",
-  "ui.card.progress": "сдано {done} из {total}",
-  "ui.card.tasks": "{n} заданий",
-  "ui.card.last_mark": "Последняя отметка: {date}",
 
-  "ui.badge.success": "Сдал",
+  "ui.badge.success": "Готово",
   "ui.badge.warning": "Внимание",
   "ui.badge.danger": "Ошибка",
 
   "ui.dialog.open": "Открыть окно подтверждения",
   "ui.dialog.title": "Удалить группу?",
-  "ui.dialog.text": "Будут удалены все студенты и листы этой группы. Действие нельзя отменить.",
+  "ui.dialog.text": "Будут удалены список студентов и привязанные файлы этой группы. Действие нельзя отменить.",
   "ui.toast.show_success": "Показать успех",
   "ui.toast.show_error": "Показать ошибку",
   "ui.toast.success_text": "Изменения сохранены",
@@ -172,12 +163,12 @@
   "ui.empty.text": "Пока нет ни одной группы",
   "ui.empty.action": "Загрузить группу",
 
-  "ui.checkbox.hint": "Номера заданий. Отметка — галочка и цвет.",
+  "ui.checkbox.hint": "Выбор групп. Отметка — галочка и цвет.",
 
   "ui.table.col_name": "Студент",
   "ui.table.col_status": "Статус",
-  "ui.table.done": "Сдал",
-  "ui.table.not_done": "Не сдал",
+  "ui.table.done": "Готово",
+  "ui.table.not_done": "Ожидает",
 
   "ui.fonts.label": "Таджикские буквы",
   "ui.fonts.letters": "Ғ ғ Ӣ ӣ Қ қ Ӯ ӯ Ҳ ҳ Ҷ ҷ",
@@ -205,7 +196,7 @@
   "groups.rename.success": "Номер группы обновлён",
 
   "groups.delete.title": "Удалить группу?",
-  "groups.delete.text": "Будут удалены список студентов, все листы сдачи и привязанные файлы этой группы. Действие нельзя отменить.",
+  "groups.delete.text": "Будут удалены список студентов и привязанные файлы этой группы. Действие нельзя отменить.",
   "groups.delete.success": "Группа удалена",
 
   "groups.upload.title": "Загрузка группы из Excel",
@@ -249,7 +240,7 @@
   "groups.student_add.success": "Студент добавлен",
 
   "groups.student_delete.title": "Удалить студента?",
-  "groups.student_delete.text": "Студент исчезнет из группы и из всех листов сдачи. Действие нельзя отменить.",
+  "groups.student_delete.text": "Студент исчезнет из группы. Действие нельзя отменить.",
   "groups.student_delete.success": "Студент удалён",
 
   "groups.columns_modal.title": "Колонки таблицы",

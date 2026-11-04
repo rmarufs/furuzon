@@ -11,12 +11,6 @@
     <path d="M15.5 4.8a3.5 3.5 0 0 1 0 6.4"/>
     <path d="M18 14.4c2.1.8 3.5 2.7 3.5 5.6"/>
   </symbol>
-  <symbol id="i-sheets" viewBox="0 0 24 24">
-    <rect x="5" y="3.5" width="14" height="17" rx="2"/>
-    <path d="M9 3.5v2h6v-2"/>
-    <path d="m8.5 11 1.5 1.5 2.5-3"/>
-    <path d="M14 11.5h2M8.5 16h7.5"/>
-  </symbol>
   <symbol id="i-materials" viewBox="0 0 24 24">
     <path d="M3.5 6.5a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>
   </symbol>
@@ -44,11 +38,6 @@
     <path d="M4 7h16M10 7V4.5h4V7"/>
     <path d="M6 7l1 13h10l1-13"/>
     <path d="M10 11v5.5M14 11v5.5"/>
-  </symbol>
-  <symbol id="i-archive" viewBox="0 0 24 24">
-    <rect x="3.5" y="4.5" width="17" height="4.5" rx="1"/>
-    <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/>
-    <path d="M10 13h4"/>
   </symbol>
   <symbol id="i-excel" viewBox="0 0 24 24">
     <path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9z"/>

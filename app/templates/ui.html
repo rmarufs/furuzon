@@ -77,7 +77,7 @@
             </button>
             <div class="menu" id="ui-menu-group" hidden>
               <button type="button" class="menu__item" data-menu-close>{{ icon('edit') }}<span>{{ t('common.edit') }}</span></button>
-              <button type="button" class="menu__item" data-menu-close>{{ icon('archive') }}<span>{{ t('common.archive') }}</span></button>
+              <button type="button" class="menu__item" data-menu-close>{{ icon('excel') }}<span>{{ t('common.download_excel') }}</span></button>
               <hr class="menu__separator">
               <button type="button" class="menu__item menu__item--danger" data-menu-close data-demo="confirm">
                 {{ icon('trash') }}<span>{{ t('common.delete') }}</span>
@@ -91,57 +91,11 @@
           <span>{{ t('ui.card.modified', date=t('ui.sample.date')) }}</span>
         </div>
       </article>
-
-      <article class="card">
-        <div class="card__header">
-          <h3 class="card__title">{{ t('ui.sample.sheet_title') }}</h3>
-          <div class="menu-wrap">
-            <button type="button" class="icon-btn" data-menu-toggle aria-controls="ui-menu-sheet"
-                    aria-haspopup="true" aria-expanded="false" aria-label="{{ t('common.more_actions') }}">
-              {{ icon('more') }}
-            </button>
-            <div class="menu" id="ui-menu-sheet" hidden>
-              <button type="button" class="menu__item" data-menu-close>{{ icon('edit') }}<span>{{ t('common.edit') }}</span></button>
-              <button type="button" class="menu__item" data-menu-close>{{ icon('excel') }}<span>{{ t('common.download_excel') }}</span></button>
-              <hr class="menu__separator">
-              <button type="button" class="menu__item menu__item--danger" data-menu-close data-demo="confirm">
-                {{ icon('trash') }}<span>{{ t('common.delete') }}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        <p class="card__meta">{{ t('ui.card.sheet_meta', group=t('ui.sample.group_number'), n=2) }}</p>
-        <div class="progress">
-          <div class="progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="25" aria-valuenow="18">
-            <div class="progress__bar" data-value="72"></div>
-          </div>
-          <span class="progress__text">{{ t('ui.card.progress', done=18, total=25) }}</span>
-        </div>
-        <div class="card__meta">
-          <span>{{ t('ui.card.tasks', n=5) }}</span>
-          <span>{{ t('ui.card.last_mark', date=t('ui.sample.date')) }}</span>
-        </div>
-      </article>
-
-      <article class="card card--archived">
-        <div class="card__header">
-          <h3 class="card__title">{{ t('ui.sample.sheet_title') }}</h3>
-          <span class="badge">{{ icon('archive', 'icon--sm') }}{{ t('common.archive') }}</span>
-        </div>
-        <p class="card__meta">{{ t('ui.card.sheet_meta', group=t('ui.sample.group_number'), n=2) }}</p>
-        <div class="progress">
-          <div class="progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="25" aria-valuenow="25">
-            <div class="progress__bar" data-value="100"></div>
-          </div>
-          <span class="progress__text">{{ t('ui.card.progress', done=25, total=25) }}</span>
-        </div>
-      </article>
     </div>
     <div class="cluster">
       <span class="badge badge--success">{{ icon('check', 'icon--sm') }}{{ t('ui.badge.success') }}</span>
       <span class="badge badge--warning">{{ t('ui.badge.warning') }}</span>
       <span class="badge badge--danger">{{ t('ui.badge.danger') }}</span>
-      <span class="badge">{{ t('common.archive') }}</span>
     </div>
   </section>
 
@@ -216,7 +170,7 @@
   <section class="stack" aria-labelledby="ui-icons">
     <h2 id="ui-icons">{{ t('ui.section.icons') }}</h2>
     <ul class="ui-icons">
-      {% for name in ['home', 'groups', 'sheets', 'materials', 'profile', 'more', 'plus', 'search', 'edit', 'trash', 'archive', 'excel', 'qr', 'file-pdf', 'file-doc', 'check', 'lock', 'close', 'chevron-down', 'alert', 'language', 'theme', 'settings', 'logout'] %}
+      {% for name in ['home', 'groups', 'materials', 'profile', 'more', 'plus', 'search', 'edit', 'trash', 'excel', 'qr', 'file-pdf', 'file-doc', 'check', 'lock', 'close', 'chevron-down', 'alert', 'language', 'theme', 'settings', 'logout'] %}
       <li class="ui-icons__item">{{ icon(name) }}<code>{{ name }}</code></li>
       {% endfor %}
     </ul>

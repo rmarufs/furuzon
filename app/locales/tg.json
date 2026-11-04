@@ -5,7 +5,6 @@
   "nav.skip_to_content": "Гузариш ба мундариҷа",
   "nav.home": "Асосӣ",
   "nav.groups": "Гурӯҳҳои ман",
-  "nav.sheets": "Ҳисоби корҳо",
   "nav.materials": "Маводи тақсимотӣ",
 
   "profile.name_placeholder": "Омӯзгор",
@@ -28,7 +27,6 @@
   "common.edit": "Таҳрир кардан",
   "common.add": "Илова кардан",
   "common.search": "Ҷустуҷӯ",
-  "common.archive": "Бойгонӣ",
   "common.download_excel": "Зеркашии Excel",
   "common.qr": "QR",
   "common.loading": "Боргирӣ…",
@@ -107,12 +105,10 @@
 
   "home.title": "Асосӣ",
   "home.welcome": "Ба кабинети шахсии омӯзгор хуш омадед",
-  "home.subtitle": "Гурӯҳҳоро идора кунед, супоридани корҳоро қайд намоед ва маводро тавассути QR-код фиристед.",
+  "home.subtitle": "Рӯйхати гурӯҳҳоро аз Excel идора кунед ва маводи таълимиро бо донишҷӯён тавассути QR-код мубодила намоед.",
   "home.create_first_group": "Сохтани гурӯҳи аввалин",
   "home.feature_groups_title": "Гурӯҳҳои ман",
   "home.feature_groups_desc": "Рӯйхати донишҷӯёнро аз Excel бор кунед ва онро бевосита дар сайт таҳрир намоед.",
-  "home.feature_sheets_title": "Ҳисоби корҳо",
-  "home.feature_sheets_desc": "Бо як пахш қайд кунед, ки кадом донишҷӯ кадом супоришро супоридааст.",
   "home.feature_materials_title": "Маводи тақсимотӣ",
   "home.feature_materials_desc": "Файлҳоро барои гурӯҳҳо бор кунед ва QR-кодро барои зеркашӣ дар дарс нишон диҳед.",
 
@@ -137,14 +133,13 @@
   "ui.btn.loading": "Боргирӣ",
 
   "ui.field.label": "Рақами гурӯҳ",
-  "ui.field.error_label": "Номи варақа",
-  "ui.field.error_message": "Номи варақаро ворид кунед",
+  "ui.field.error_label": "Рақами гурӯҳ",
+  "ui.field.error_message": "Рақами гурӯҳро ворид кунед",
 
   "ui.course.label": "Курс",
 
   "ui.sample.group_number": "ИС-21",
   "ui.sample.date": "12.10.2026",
-  "ui.sample.sheet_title": "Кори назоратӣ 1",
   "ui.sample.student_1": "Раҳмонов А.",
   "ui.sample.student_2": "Ҷалилова М.",
   "ui.sample.student_3": "Ҳакимов Қ.",
@@ -152,18 +147,14 @@
   "ui.card.course": "Курси {n}",
   "ui.card.students": "{n} донишҷӯ",
   "ui.card.modified": "Тағйир ёфт: {date}",
-  "ui.card.sheet_meta": "Гурӯҳи {group}, курси {n}",
-  "ui.card.progress": "супорида шуд {done} аз {total}",
-  "ui.card.tasks": "{n} вазифа",
-  "ui.card.last_mark": "Охирин аломат: {date}",
 
-  "ui.badge.success": "Супурд",
+  "ui.badge.success": "Омода",
   "ui.badge.warning": "Диққат",
   "ui.badge.danger": "Хато",
 
   "ui.dialog.open": "Кушодани равзанаи тасдиқ",
   "ui.dialog.title": "Гурӯҳ нест карда шавад?",
-  "ui.dialog.text": "Ҳамаи донишҷӯён ва варақаҳои ин гурӯҳ нест карда мешаванд. Амалро бозгардондан мумкин нест.",
+  "ui.dialog.text": "Рӯйхати донишҷӯён ва файлҳои вобастаи ин гурӯҳ нест карда мешаванд. Амалро бозгардондан мумкин нест.",
   "ui.toast.show_success": "Нишон додани муваффақият",
   "ui.toast.show_error": "Нишон додани хато",
   "ui.toast.success_text": "Тағйирот захира шуд",
@@ -172,12 +163,12 @@
   "ui.empty.text": "Ҳоло ягон гурӯҳ нест",
   "ui.empty.action": "Бор кардани гурӯҳ",
 
-  "ui.checkbox.hint": "Рақамҳои вазифаҳо. Аломат — қайд ва ранг.",
+  "ui.checkbox.hint": "Интихоби гурӯҳҳо. Аломат — қайд ва ранг.",
 
   "ui.table.col_name": "Донишҷӯ",
   "ui.table.col_status": "Ҳолат",
-  "ui.table.done": "Супурд",
-  "ui.table.not_done": "Супурда нашуд",
+  "ui.table.done": "Омода",
+  "ui.table.not_done": "Интизор",
 
   "ui.fonts.label": "Ҳарфҳои тоҷикӣ",
   "ui.fonts.letters": "Ғ ғ Ӣ ӣ Қ қ Ӯ ӯ Ҳ ҳ Ҷ ҷ",
@@ -202,7 +193,7 @@
   "groups.rename.success": "Рақами гурӯҳ нав карда шуд",
 
   "groups.delete.title": "Гурӯҳ нест карда шавад?",
-  "groups.delete.text": "Рӯйхати донишҷӯён, ҳамаи варақаҳои супоридан ва файлҳои вобастаи ин гурӯҳ нест карда мешаванд. Амалро бозгардондан мумкин нест.",
+  "groups.delete.text": "Рӯйхати донишҷӯён ва файлҳои вобастаи ин гурӯҳ нест карда мешаванд. Амалро бозгардондан мумкин нест.",
   "groups.delete.success": "Гурӯҳ нест карда шуд",
 
   "groups.upload.title": "Бор кардани гурӯҳ аз Excel",
@@ -246,7 +237,7 @@
   "groups.student_add.success": "Донишҷӯ илова шуд",
 
   "groups.student_delete.title": "Донишҷӯ нест карда шавад?",
-  "groups.student_delete.text": "Донишҷӯ аз гурӯҳ ва аз ҳамаи варақаҳои супоридан нест мешавад. Амалро бозгардондан мумкин нест.",
+  "groups.student_delete.text": "Донишҷӯ аз гурӯҳ нест мешавад. Амалро бозгардондан мумкин нест.",
   "groups.student_delete.success": "Донишҷӯ нест карда шуд",
 
   "groups.columns_modal.title": "Сутунҳои ҷадвал",

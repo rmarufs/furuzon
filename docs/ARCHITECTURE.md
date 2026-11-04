@@ -21,18 +21,13 @@
 | `password_reset_tokens` | id, user_id → users (cascade), token_hash, expires_at, used_at | токен живёт 1 час, одноразовый, в БД только хеш |
 | `groups` | id, owner_id → users (cascade), number (текст), course (1–6), columns (JSONB), created_at, updated_at | `columns` — упорядоченный список `[{key, title}]`, например `{"key":"c1","title":"ФИО"}`. Ключи стабильные, при перестановке не меняются |
 | `students` | id, group_id → groups (cascade), position, data (JSONB), created_at | `data` — `{ "c1": "Иванов И.", "c2": "..." }` по ключам колонок |
-| `sheets` | id, owner_id → users (cascade), group_id → groups (cascade), title, tasks_count (1–10), shown_columns (JSONB), is_archived, last_marked_at, created_at, updated_at | `shown_columns` — упорядоченный список ключей колонок группы |
-| `sheet_excluded_students` | sheet_id, student_id (оба cascade), PK (sheet_id, student_id) | студенты, убранные из конкретного листа |
-| `marks` | sheet_id, student_id (оба cascade), task_no, PK (sheet_id, student_id, task_no) | строка есть = «сдал». Нет строки = «не сдал» |
 | `files` | id, owner_id → users (cascade), original_name, storage_key, size_bytes, content_type, public_token (уникальный), created_at | `storage_key` — случайное имя, не оригинальное |
 | `file_groups` | file_id, group_id (оба cascade), PK (file_id, group_id) | один файл в нескольких группах хранится один раз |
 | `activity` | id, owner_id → users (cascade), type, object_type, object_id (может быть пустым), object_title, created_at | см. раздел 8 |
 
 Правила данных:
-- Лист не хранит студентов: студенты листа = студенты группы минус `sheet_excluded_students`. Так новый студент в группе сразу виден в листе (SHT-5).
-- Удаление колонки группы: убрать ключ из `groups.columns`, из `data` всех студентов и из `shown_columns` всех листов этой группы.
-- Удаление студента, группы или листа каскадом чистит связанные строки (см. раздел 9 SPEC). Файлы-сироты (у которых не осталось групп) удаляет сервис вместе с объектом в хранилище.
-- Уменьшение `tasks_count` у листа удаляет отметки с номером больше нового значения (после подтверждения).
+- Удаление колонки группы: убрать ключ из `groups.columns` и из `data` всех студентов этой группы.
+- Удаление студента или группы каскадом чистит связанные строки (см. раздел 8 SPEC). Файлы-сироты (у которых не осталось групп) удаляет сервис вместе с объектом в хранилище.
 - Уникальности номера группы нет (SPEC молчит).
 
 ## 4. Страницы (HTML, `routers/pages.py`)
@@ -43,12 +38,11 @@
 | `/login`, `/register`, `/forgot-password`, `/reset-password?token=` | без входа |
 | `/` | главная |
 | `/groups`, `/groups/new`, `/groups/{id}` | группы, загрузка, список группы |
-| `/sheets`, `/sheets/{id}` | листы, один лист |
 | `/materials` | материалы |
 | `/settings` | смена пароля |
 | `/f/{token}` | публичная ссылка файла, без входа |
 
-Разделы `/sheets` и `/materials` без групп перенаправляют на `/groups` (GEN-6). Группа открыта: `group_viewed`; лист открыт: `sheet_opened` (пишет роутер страницы).
+Раздел `/materials` без групп перенаправляет на `/groups` (GEN-6). Группа открыта: `group_viewed` (пишет роутер страницы).
 
 ## 5. API (JSON, префикс `/api`, требуют входа)
 
@@ -62,14 +56,6 @@
 - `DELETE /groups/{id}/columns/{key}`
 - `GET /groups/{id}/students` (`?q=` — поиск), `POST /groups/{id}/students`, `PATCH /groups/{id}/students/{sid}` (изменить ячейку: `key`, `value`), `DELETE /groups/{id}/students/{sid}`
 - `GET /groups/{id}/export` — Excel
-
-**Листы**
-- `GET /sheets` (`?course=&archived=`), `POST /sheets`, `GET /sheets/{id}` (студенты, отметки, прогресс), `PATCH /sheets/{id}` (title, tasks_count, shown_columns), `DELETE /sheets/{id}`
-- `PUT /sheets/{id}/marks` — сохранить пачку отметок (кнопка «Сохранить»)
-- `POST /sheets/{id}/excluded/{student_id}`, `DELETE /sheets/{id}/excluded/{student_id}` — убрать студента из листа / вернуть
-- `POST /sheets/{id}/archive`, `POST /sheets/{id}/unarchive`
-- `GET /sheets/{id}/export` — Excel (колонки листа, номера заданий 1…N, «✓» у сданных)
-- Запись в архивный лист (marks, PATCH, excluded) → 409.
 
 **Материалы**
 - `GET /materials/tree` — дерево Курс → Группа → файлы
@@ -87,7 +73,7 @@
 
 ## 6. Ошибки API
 Формат: `{"error": {"code": "group_not_found", "details": {...}}}`. Текста на языке пользователя сервер не отдаёт: фронтенд переводит по ключу `errors.<code>` из локалей.
-Статусы: 401 нет входа, 404 не найдено или чужое, 409 конфликт (архив), 413 файл слишком большой, 415 неподходящий тип, 422 неверные данные.
+Статусы: 401 нет входа, 404 не найдено или чужое, 409 конфликт, 413 файл слишком большой, 415 неподходящий тип, 422 неверные данные.
 
 ## 7. Безопасность
 - Доступ к данным: любые выборки и изменения идут через функции вида `get_owned_or_404(model, id, owner_id)`. Чужой объект неотличим от несуществующего (404).
@@ -97,10 +83,10 @@
 - Лимиты разбора Excel: до 2000 строк и 50 колонок, больше — понятная ошибка.
 
 ## 8. Журнал действий (`activity`)
-Типы: `group_viewed`, `sheet_opened`, `student_marked`, `file_uploaded`, `file_deleted`.
+Типы: `group_viewed`, `file_uploaded`, `file_deleted`.
 - Повтор типа над тем же объектом не создаёт новую запись, а обновляет `created_at` у прежней (DEF-2).
 - `object_title` — название на момент действия.
-- Записи про удалённую группу или лист удаляются вместе с ними. У `file_deleted` объекта нет, клик ведёт в «Материалы».
+- Записи про удалённую группу удаляются вместе с ней. У `file_deleted` объекта нет, клик ведёт в «Материалы».
 - Главная показывает 4 самых свежих записи.
 
 ## 9. Excel
@@ -122,5 +108,5 @@
 ## 13. Тесты
 - `tests/unit/` — парсер Excel и поиск заголовка, поиск студентов.
 - `tests/api/` — API через httpx + ASGITransport на базе `furuzon_test`, данные чистятся между тестами.
-- Обязательно для каждого ресурса (группа, студент, лист, файл): тест, что преподаватель Б не видит и не меняет данные преподавателя А.
-- `tests/e2e/` — Playwright: регистрация, загрузка группы, создание листа и отметки, загрузка файла и скачивание по `/f/{token}`.
+- Обязательно для каждого ресурса (группа, студент, файл): тест, что преподаватель Б не видит и не меняет данные преподавателя А.
+- `tests/e2e/` — Playwright: регистрация, загрузка группы, загрузка файла и скачивание по `/f/{token}`.
