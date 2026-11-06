@@ -4,6 +4,7 @@ from typing import Annotated
 from urllib.parse import urlsplit
 
 from fastapi import Depends, FastAPI, Request, Response
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
@@ -94,6 +95,40 @@ def create_app(app_settings: Settings = settings) -> FastAPI:
         StaticFiles(directory=str(BASE_DIR / "static")),
         name="static",
     )
+
+    static_dir = BASE_DIR / "static"
+    root_static_files: dict[str, tuple[str, str]] = {
+        "/favicon.ico": ("favicon.ico", "image/x-icon"),
+        "/favicon-16x16.png": ("favicon-16x16.png", "image/png"),
+        "/favicon-32x32.png": ("favicon-32x32.png", "image/png"),
+        "/apple-touch-icon.png": ("apple-touch-icon.png", "image/png"),
+        "/icon-192.png": ("icon-192.png", "image/png"),
+        "/icon-512.png": ("icon-512.png", "image/png"),
+        "/icon-maskable-512.png": ("icon-maskable-512.png", "image/png"),
+        "/manifest.webmanifest": (
+            "manifest.webmanifest",
+            "application/manifest+json",
+        ),
+    }
+
+    for route_path, (filename, media_type) in root_static_files.items():
+        file_path = static_dir / filename
+
+        def _make_static_handler(
+            path: Path = file_path, content_type: str = media_type
+        ) -> Callable[[], FileResponse]:
+            def _serve() -> FileResponse:
+                return FileResponse(path, media_type=content_type)
+
+            return _serve
+
+        application.add_api_route(
+            route_path,
+            _make_static_handler(),
+            methods=["GET"],
+            include_in_schema=False,
+        )
+
     templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
     install_jinja(templates.env)
     application.state.templates = templates
