@@ -1,5 +1,24 @@
-{% from "partials/macros.html" import logo %}
+{% from "partials/macros.html" import icon, logo %}
 <header class="topbar">
   <a class="brand" href="/">{{ logo() }}<span>{{ t('app.name') }}</span></a>
+  <nav class="topbar__nav" aria-label="{{ t('nav.main_label') }}">
+    <ul class="nav-list">
+      <li>
+        <a class="nav-link" href="/"{% if active_nav == 'home' %} aria-current="page"{% endif %}>
+          {{ icon('home') }}<span>{{ t('nav.home') }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" href="/groups"{% if active_nav == 'groups' %} aria-current="page"{% endif %}>
+          {{ icon('groups') }}<span>{{ t('nav.groups') }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" href="/materials"{% if active_nav == 'materials' %} aria-current="page"{% endif %}>
+          {{ icon('materials') }}<span>{{ t('nav.materials') }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
   {% include "partials/profile_menu.html" %}
 </header>
