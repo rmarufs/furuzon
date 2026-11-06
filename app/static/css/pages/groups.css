@@ -185,6 +185,10 @@
 }
 
 /* Preview table */
+[data-preview-section] {
+  display: none;
+}
+
 .preview-header {
   display: flex;
   flex-wrap: wrap;
@@ -441,6 +445,10 @@
 }
 
 @media (min-width: 768px) {
+  [data-preview-section] {
+    display: flex;
+  }
+
   .group-detail-top {
     flex-direction: row;
     align-items: center;
