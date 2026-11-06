@@ -14,15 +14,6 @@
     <h1>{{ t('materials.title') }}</h1>
   </header>
 
-  {% if not has_groups %}
-  <div class="card empty">
-    <span class="empty__icon">{{ icon('groups', 'icon--lg') }}</span>
-    <p>{{ t('materials.no_groups.text') }}</p>
-    <a class="btn btn--primary" href="/groups/new">
-      {{ icon('plus') }}<span>{{ t('materials.no_groups.action') }}</span>
-    </a>
-  </div>
-  {% else %}
   <section class="card stack" aria-labelledby="upload-heading">
     <h2 id="upload-heading">{{ t('materials.upload.title') }}</h2>
 
@@ -78,12 +69,9 @@
     <h2 id="tree-heading">{{ t('materials.tree.title') }}</h2>
     <div class="stack" data-tree></div>
   </section>
-  {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-{% if has_groups %}
 <script type="module" src="/static/js/pages/materials.js"></script>
-{% endif %}
 {% endblock %}

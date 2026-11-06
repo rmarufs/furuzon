@@ -1,5 +1,8 @@
+import html
 import io
+import re
 import uuid
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import UTC, datetime
 from pathlib import Path
@@ -133,27 +136,25 @@ async def upload_material(
     *,
     owner_id: int,
     course: int,
-    group_ids: list[int],
+    group_ids: list[int] | None = None,
     filename: str,
     data: bytes,
 ) -> dict[str, Any]:
-    unique_group_ids = list(dict.fromkeys(group_ids))
-    if not unique_group_ids:
-        raise AppError("validation_error", status_code=422)
-
+    unique_group_ids = list(dict.fromkeys(group_ids or []))
     clean_name, content_type = validate_material_file(data, filename)
 
-    groups_stmt = select(Group).where(
-        Group.id.in_(unique_group_ids),
-        Group.owner_id == owner_id,
-    )
-    groups = list((await session.scalars(groups_stmt)).all())
-    if len(groups) != len(unique_group_ids):
-        raise AppError("group_not_found", status_code=404)
+    if unique_group_ids:
+        groups_stmt = select(Group).where(
+            Group.id.in_(unique_group_ids),
+            Group.owner_id == owner_id,
+        )
+        groups = list((await session.scalars(groups_stmt)).all())
+        if len(groups) != len(unique_group_ids):
+            raise AppError("group_not_found", status_code=404)
 
-    for group in groups:
-        if group.course != course:
-            raise AppError("validation_error", status_code=422)
+        for group in groups:
+            if group.course != course:
+                raise AppError("validation_error", status_code=422)
 
     storage_key = _generate_storage_key(clean_name)
     public_token = qr_service.generate_public_token()
@@ -262,8 +263,19 @@ async def get_materials_tree(
             }
         )
 
+    files_by_course: dict[int, list[dict[str, Any]]] = {c: [] for c in range(1, 7)}
+    for material in materials:
+        if not group_ids_by_file.get(material.id):
+            files_by_course.setdefault(material.course, []).append(
+                serialized_by_id[material.id]
+            )
+
     courses = [
-        {"course": course, "groups": groups_by_course[course]}
+        {
+            "course": course,
+            "groups": groups_by_course[course],
+            "files": files_by_course[course],
+        }
         for course in range(1, 7)
     ]
     return {"courses": courses}
@@ -436,3 +448,242 @@ async def cleanup_orphan_files_for_ids(
             await session.delete(material)
             await session.flush()
             await storage.delete(key)
+
+
+def _local_tag(tag: str) -> str:
+    if "}" in tag:
+        return tag.rsplit("}", 1)[1]
+    if ":" in tag:
+        return tag.rsplit(":", 1)[1]
+    return tag
+
+
+def _attr_val(elem: ET.Element, local_name: str) -> str:
+    for key, val in elem.attrib.items():
+        if _local_tag(key) == local_name:
+            return val
+    return ""
+
+
+def _has_flag(rpr: ET.Element | None, tag_name: str) -> bool:
+    if rpr is None:
+        return False
+    for child in rpr:
+        if _local_tag(child.tag) == tag_name:
+            val = _attr_val(child, "val").lower()
+            return val not in ("0", "false", "none")
+    return False
+
+
+def _render_run(run_elem: ET.Element) -> str:
+    rpr = None
+    parts: list[str] = []
+    for child in run_elem:
+        cname = _local_tag(child.tag)
+        if cname == "rPr":
+            rpr = child
+        elif cname == "t" and child.text:
+            parts.append(html.escape(child.text, quote=True))
+        elif cname in ("br", "cr"):
+            parts.append("<br>")
+        elif cname == "tab":
+            parts.append(" ")
+    if run_elem.text:
+        parts.insert(0, html.escape(run_elem.text, quote=True))
+    inner = "".join(parts)
+    if not inner:
+        return ""
+    if _has_flag(rpr, "u"):
+        inner = f"<u>{inner}</u>"
+    if _has_flag(rpr, "i"):
+        inner = f"<em>{inner}</em>"
+    if _has_flag(rpr, "b"):
+        inner = f"<strong>{inner}</strong>"
+    return inner
+
+
+def _render_paragraph(p_elem: ET.Element) -> tuple[str, bool]:
+    style_val = ""
+    is_list_item = False
+    chunks: list[str] = []
+    if p_elem.text:
+        chunks.append(html.escape(p_elem.text, quote=True))
+
+    for child in p_elem:
+        cname = _local_tag(child.tag)
+        if cname == "pPr":
+            for pchild in child:
+                pname = _local_tag(pchild.tag)
+                if pname == "pStyle":
+                    style_val = _attr_val(pchild, "val").lower()
+                elif pname == "numPr":
+                    is_list_item = True
+        elif cname == "r":
+            chunks.append(_render_run(child))
+        elif cname == "hyperlink":
+            for hchild in child:
+                if _local_tag(hchild.tag) == "r":
+                    chunks.append(_render_run(hchild))
+        elif cname in ("br", "cr"):
+            chunks.append("<br>")
+
+    content = "".join(chunks).strip()
+    if not content:
+        return "", False
+
+    if is_list_item:
+        return f"<li>{content}</li>", True
+
+    if style_val.startswith("heading") or style_val in ("title", "subtitle"):
+        level = "h2" if style_val in ("heading1", "title") else "h3"
+        return f"<{level}>{content}</{level}>", False
+
+    return f"<p>{content}</p>", False
+
+
+def _render_table(tbl_elem: ET.Element) -> str:
+    rows_html: list[str] = []
+    for child in tbl_elem:
+        if _local_tag(child.tag) != "tr":
+            continue
+        cells_html: list[str] = []
+        for cell in child:
+            if _local_tag(cell.tag) != "tc":
+                continue
+            cell_parts: list[str] = []
+            for p in cell:
+                if _local_tag(p.tag) == "p":
+                    rendered, _ = _render_paragraph(p)
+                    if rendered:
+                        cell_parts.append(rendered)
+            cells_html.append(f"<td>{''.join(cell_parts)}</td>")
+        if cells_html:
+            rows_html.append(f"<tr>{''.join(cells_html)}</tr>")
+    if not rows_html:
+        return ""
+    return f"<table><tbody>{''.join(rows_html)}</tbody></table>"
+
+
+def render_docx_html(data: bytes) -> str:
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            raw_xml = archive.read(DOCX_DOCUMENT_ENTRY).decode(
+                "utf-8", errors="replace"
+            )
+    except (KeyError, zipfile.BadZipFile) as exc:
+        raise AppError("invalid_material_type", status_code=415) from exc
+
+    if "xmlns:w=" not in raw_xml:
+        raw_xml = re.sub(
+            r"<w:document\b",
+            '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"',
+            raw_xml,
+            count=1,
+        )
+
+    try:
+        root = ET.fromstring(raw_xml)
+    except ET.ParseError as exc:
+        raise AppError("invalid_material_type", status_code=415) from exc
+
+    body = next(
+        (child for child in root if _local_tag(child.tag) == "body"),
+        root,
+    )
+
+    blocks: list[str] = []
+    list_buffer: list[str] = []
+
+    def _flush_list() -> None:
+        if list_buffer:
+            blocks.append(f"<ul>{''.join(list_buffer)}</ul>")
+            list_buffer.clear()
+
+    for elem in body:
+        ename = _local_tag(elem.tag)
+        if ename == "p":
+            rendered, is_list = _render_paragraph(elem)
+            if not rendered:
+                continue
+            if is_list:
+                list_buffer.append(rendered)
+            else:
+                _flush_list()
+                blocks.append(rendered)
+        elif ename == "tbl":
+            _flush_list()
+            table_html = _render_table(elem)
+            if table_html:
+                blocks.append(table_html)
+
+    _flush_list()
+    return "".join(blocks)
+
+
+async def get_material_file_bytes(
+    session: AsyncSession,
+    storage: Storage,
+    *,
+    material_id: int,
+    owner_id: int,
+) -> tuple[Material, bytes]:
+    material = await get_owned_material_or_404(
+        session,
+        material_id=material_id,
+        owner_id=owner_id,
+    )
+    try:
+        file_bytes = await storage.read(material.storage_key)
+    except FileNotFoundError as exc:
+        raise AppError("material_not_found", status_code=404) from exc
+    return material, file_bytes
+
+
+async def get_material_preview(
+    session: AsyncSession,
+    storage: Storage,
+    *,
+    material_id: int,
+    owner_id: int,
+) -> dict[str, Any]:
+    material, file_bytes = await get_material_file_bytes(
+        session,
+        storage,
+        material_id=material_id,
+        owner_id=owner_id,
+    )
+    ext = Path(material.original_name).suffix.lower()
+    download_url = f"/api/materials/{material.id}/file?download=1"
+
+    if ext == ".docx":
+        html_content = render_docx_html(file_bytes)
+        return {
+            "id": material.id,
+            "original_name": material.original_name,
+            "content_type": material.content_type,
+            "mode": "docx",
+            "html": html_content,
+            "file_url": None,
+            "download_url": download_url,
+        }
+
+    if ext == ".pdf":
+        return {
+            "id": material.id,
+            "original_name": material.original_name,
+            "content_type": material.content_type,
+            "mode": "pdf",
+            "html": None,
+            "file_url": f"/api/materials/{material.id}/file",
+            "download_url": download_url,
+        }
+
+    return {
+        "id": material.id,
+        "original_name": material.original_name,
+        "content_type": material.content_type,
+        "mode": "unsupported",
+        "html": None,
+        "file_url": None,
+        "download_url": download_url,
+    }

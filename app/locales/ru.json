@@ -295,6 +295,11 @@
   "materials.size.mb": "{n} МБ",
   "materials.file.uploaded": "Загружен {date}",
   "materials.file.qr_aria": "QR-код файла {name}",
+  "materials.file.preview_aria": "Открыть файл {name}",
+
+  "materials.preview.download": "Скачать файл",
+  "materials.preview.empty": "В документе нет текста для отображения.",
+  "materials.preview.unsupported": "Предпросмотр для этого формата недоступен. Скачайте файл, чтобы открыть его на устройстве.",
 
   "materials.menu.replace": "Заменить файл",
   "materials.menu.remove_from_group": "Убрать из группы",

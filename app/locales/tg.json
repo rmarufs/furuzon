@@ -286,6 +286,11 @@
   "materials.size.mb": "{n} МБ",
   "materials.file.uploaded": "Бор карда шуд: {date}",
   "materials.file.qr_aria": "QR-коди файли {name}",
+  "materials.file.preview_aria": "Кушодани файли {name}",
+
+  "materials.preview.download": "Зеркашии файл",
+  "materials.preview.empty": "Дар ҳуҷҷат матн барои намоиш нест.",
+  "materials.preview.unsupported": "Пешнамоиш барои ин формат дастрас нест. Барои кушодан файлро ба дастгоҳ зеркашӣ кунед.",
 
   "materials.menu.replace": "Иваз кардани файл",
   "materials.menu.remove_from_group": "Аз гурӯҳ гирифтан",

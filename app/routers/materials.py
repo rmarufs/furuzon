@@ -8,8 +8,13 @@ from app.core.database import get_session
 from app.core.deps import get_current_user
 from app.core.exceptions import AppError
 from app.models.user import User
+from app.routers.public_files import build_attachment_disposition
 from app.schemas.auth import StatusResponse
-from app.schemas.material import MaterialItem, MaterialTreeResponse
+from app.schemas.material import (
+    MaterialItem,
+    MaterialPreviewResponse,
+    MaterialTreeResponse,
+)
 from app.services import material_service, qr_service
 from app.services.material_service import MAX_MATERIAL_SIZE_BYTES
 from app.storage import Storage, get_storage
@@ -24,9 +29,9 @@ async def _read_material_upload(upload: UploadFile) -> bytes:
     return data
 
 
-def _parse_group_ids(raw_values: list[str]) -> list[int]:
+def _parse_group_ids(raw_values: list[str] | None) -> list[int]:
     if not raw_values:
-        raise AppError("validation_error", status_code=422)
+        return []
 
     result: list[int] = []
     for raw in raw_values:
@@ -55,7 +60,7 @@ def _parse_group_ids(raw_values: list[str]) -> list[int]:
                     raise AppError("validation_error", status_code=422) from exc
                 result.append(val)
 
-    if not result or any(gid <= 0 for gid in result):
+    if any(gid <= 0 for gid in result):
         raise AppError("validation_error", status_code=422)
     return result
 
@@ -78,7 +83,7 @@ async def upload_material(
     storage: Annotated[Storage, Depends(get_storage)],
     file: Annotated[UploadFile, File()],
     course: Annotated[int, Form(ge=1, le=6)],
-    group_ids: Annotated[list[str], Form()],
+    group_ids: Annotated[list[str] | None, Form()] = None,
 ) -> dict[str, Any]:
     parsed_group_ids = _parse_group_ids(group_ids)
     data = await _read_material_upload(file)
@@ -165,4 +170,49 @@ async def get_material_qr_svg(
     return Response(
         content=svg_bytes,
         media_type="image/svg+xml",
+    )
+
+
+@router.get(
+    "/materials/{material_id}/preview",
+    response_model=MaterialPreviewResponse,
+)
+async def get_material_preview(
+    material_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[Storage, Depends(get_storage)],
+) -> dict[str, Any]:
+    return await material_service.get_material_preview(
+        session,
+        storage,
+        material_id=material_id,
+        owner_id=user.id,
+    )
+
+
+@router.get("/materials/{material_id}/file")
+async def get_material_file(
+    material_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    storage: Annotated[Storage, Depends(get_storage)],
+    download: bool = False,
+) -> Response:
+    material, file_bytes = await material_service.get_material_file_bytes(
+        session,
+        storage,
+        material_id=material_id,
+        owner_id=user.id,
+    )
+    disposition = build_attachment_disposition(material.original_name)
+    if not download and material.content_type == "application/pdf":
+        disposition = disposition.replace("attachment;", "inline;", 1)
+    return Response(
+        content=file_bytes,
+        media_type=material.content_type,
+        headers={
+            "Content-Disposition": disposition,
+            "X-Content-Type-Options": "nosniff",
+        },
     )

@@ -27,7 +27,18 @@ class MaterialGroupNode(BaseModel):
 class MaterialCourseNode(BaseModel):
     course: int
     groups: list[MaterialGroupNode]
+    files: list[MaterialItem] = []
 
 
 class MaterialTreeResponse(BaseModel):
     courses: list[MaterialCourseNode]
+
+
+class MaterialPreviewResponse(BaseModel):
+    id: int
+    original_name: str
+    content_type: str
+    mode: str
+    html: str | None = None
+    file_url: str | None = None
+    download_url: str

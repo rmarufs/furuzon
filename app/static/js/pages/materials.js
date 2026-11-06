@@ -168,10 +168,6 @@ async function handleUpload(event) {
     showUploadError(t("materials.error.no_course"));
     return;
   }
-  if (selectedGroupIds.size === 0) {
-    showUploadError(t("materials.error.no_groups"));
-    return;
-  }
 
   const body = new FormData();
   body.append("file", file);
@@ -425,6 +421,153 @@ function openReplaceModal(file) {
   });
 }
 
+const SAFE_PREVIEW_TAGS = new Set([
+  "P",
+  "H2",
+  "H3",
+  "STRONG",
+  "EM",
+  "U",
+  "BR",
+  "UL",
+  "LI",
+  "TABLE",
+  "TBODY",
+  "TR",
+  "TD",
+]);
+
+function sanitizePreviewNode(srcNode) {
+  if (srcNode.nodeType === Node.TEXT_NODE) {
+    return document.createTextNode(srcNode.textContent || "");
+  }
+  if (srcNode.nodeType !== Node.ELEMENT_NODE) {
+    return null;
+  }
+  const tag = srcNode.tagName.toUpperCase();
+  const container = SAFE_PREVIEW_TAGS.has(tag)
+    ? document.createElement(tag.toLowerCase())
+    : document.createDocumentFragment();
+  for (const child of srcNode.childNodes) {
+    const cleanChild = sanitizePreviewNode(child);
+    if (cleanChild) {
+      container.append(cleanChild);
+    }
+  }
+  return container;
+}
+
+function renderSanitizedDocxHtml(targetEl, rawHtml) {
+  targetEl.replaceChildren();
+  const parsed = new DOMParser().parseFromString(rawHtml, "text/html");
+  for (const child of parsed.body.childNodes) {
+    const clean = sanitizePreviewNode(child);
+    if (clean) {
+      targetEl.append(clean);
+    }
+  }
+}
+
+function openPreviewModal(file) {
+  return new Promise((resolve) => {
+    const dialog = buildDialog("preview-modal-title");
+    dialog.classList.add("modal--preview");
+
+    const body = document.createElement("div");
+    body.className = "modal__body";
+
+    const heading = document.createElement("h2");
+    heading.id = "preview-modal-title";
+    heading.className = "file-name";
+    heading.textContent = file.original_name;
+
+    const previewBox = document.createElement("div");
+    previewBox.className = "preview-box";
+    const loadingEl = document.createElement("p");
+    loadingEl.className = "text-muted";
+    loadingEl.textContent = t("common.loading");
+    previewBox.append(loadingEl);
+
+    body.append(heading, previewBox);
+
+    const actions = document.createElement("div");
+    actions.className = "modal__actions";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "btn btn--secondary";
+    closeBtn.textContent = t("common.close");
+    closeBtn.addEventListener("click", () => dialog.close("cancel"));
+
+    const downloadLink = document.createElement("a");
+    downloadLink.className = "btn btn--primary";
+    downloadLink.href = `/api/materials/${file.id}/file?download=1`;
+    downloadLink.download = file.original_name;
+    downloadLink.textContent = t("materials.preview.download");
+
+    actions.append(closeBtn, downloadLink);
+    dialog.append(body, actions);
+
+    dialog.addEventListener("close", () => {
+      dialog.remove();
+      resolve();
+    });
+
+    document.body.append(dialog);
+    dialog.showModal();
+    closeBtn.focus();
+
+    apiGet(`/materials/${file.id}/preview`)
+      .then((data) => {
+        if (!dialog.isConnected) {
+          return;
+        }
+        previewBox.replaceChildren();
+        if (data.download_url) {
+          downloadLink.href = data.download_url;
+        }
+        if (data.mode === "docx") {
+          const docEl = document.createElement("article");
+          docEl.className = "doc-preview";
+          if (data.html && data.html.trim()) {
+            renderSanitizedDocxHtml(docEl, data.html);
+          } else {
+            const emptyP = document.createElement("p");
+            emptyP.className = "text-muted";
+            emptyP.textContent = t("materials.preview.empty");
+            docEl.append(emptyP);
+          }
+          previewBox.append(docEl);
+        } else if (data.mode === "pdf" && data.file_url) {
+          const frame = document.createElement("iframe");
+          frame.className = "pdf-preview";
+          frame.src = data.file_url;
+          frame.title = file.original_name;
+          previewBox.append(frame);
+        } else {
+          const msg = document.createElement("p");
+          msg.className = "notice notice--warning";
+          msg.append(buildIcon("alert"));
+          const msgText = document.createElement("span");
+          msgText.textContent = t("materials.preview.unsupported");
+          msg.append(msgText);
+          previewBox.append(msg);
+          downloadLink.click();
+        }
+      })
+      .catch((err) => {
+        if (!dialog.isConnected) {
+          return;
+        }
+        previewBox.replaceChildren();
+        const errEl = document.createElement("p");
+        errEl.className = "field__error";
+        errEl.textContent = err.message || t("errors.unknown");
+        previewBox.append(errEl);
+      });
+  });
+}
+
 /* ---------- File actions ---------- */
 
 async function handleReplace(file) {
@@ -502,9 +645,12 @@ function buildFileRow(file, group) {
 
   const info = document.createElement("div");
   info.className = "file-row__info";
-  const name = document.createElement("span");
-  name.className = "file-row__name";
+  const name = document.createElement("button");
+  name.type = "button";
+  name.className = "file-row__name file-row__link";
+  name.setAttribute("aria-label", t("materials.file.preview_aria", { name: file.original_name }));
   name.textContent = file.original_name;
+  name.addEventListener("click", () => openPreviewModal(file));
   const meta = document.createElement("span");
   meta.className = "file-row__meta";
   meta.textContent = `${formatSize(file.size_bytes)} · ${t("materials.file.uploaded", {
@@ -527,7 +673,9 @@ function buildFileRow(file, group) {
   const menuWrap = document.createElement("div");
   menuWrap.className = "menu-wrap";
 
-  const menuId = `file-menu-${group.id}-${file.id}`;
+  const menuId = group
+    ? `file-menu-${group.id}-${file.id}`
+    : `file-menu-course-${file.course}-${file.id}`;
   const toggleBtn = document.createElement("button");
   toggleBtn.type = "button";
   toggleBtn.className = "icon-btn";
@@ -552,11 +700,17 @@ function buildFileRow(file, group) {
       label: t("materials.menu.replace"),
       onClick: () => handleReplace(file),
     }),
-    buildMenuItem({
-      iconName: "close",
-      label: t("materials.menu.remove_from_group"),
-      onClick: () => handleRemoveFromGroup(file, group),
-    }),
+  );
+  if (group) {
+    menu.append(
+      buildMenuItem({
+        iconName: "close",
+        label: t("materials.menu.remove_from_group"),
+        onClick: () => handleRemoveFromGroup(file, group),
+      }),
+    );
+  }
+  menu.append(
     separator,
     buildMenuItem({
       iconName: "trash",
@@ -632,24 +786,39 @@ function buildGroupNode(group) {
 function renderTree() {
   treeEl.replaceChildren();
   for (const courseNode of tree.courses) {
+    const courseFiles = courseNode.files || [];
+    const countLabel =
+      courseNode.groups.length === 0 && courseFiles.length > 0
+        ? tp("materials.files_count", courseFiles.length)
+        : tp("materials.groups_count", courseNode.groups.length);
     const node = buildNode(
       `course-${courseNode.course}`,
       "tree-node card tree-course",
       buildSummary(
         t("materials.tree.course", { n: courseNode.course }),
-        tp("materials.groups_count", courseNode.groups.length),
+        countLabel,
       ),
     );
 
-    if (courseNode.groups.length === 0) {
+    if (courseNode.groups.length === 0 && courseFiles.length === 0) {
       node.append(buildEmpty(t("materials.tree.empty_course")));
     } else {
-      const inner = document.createElement("div");
-      inner.className = "tree-course__groups";
-      for (const group of courseNode.groups) {
-        inner.append(buildGroupNode(group));
+      if (courseFiles.length > 0) {
+        const list = document.createElement("ul");
+        list.className = "file-list";
+        for (const file of courseFiles) {
+          list.append(buildFileRow(file, null));
+        }
+        node.append(list);
       }
-      node.append(inner);
+      if (courseNode.groups.length > 0) {
+        const inner = document.createElement("div");
+        inner.className = "tree-course__groups";
+        for (const group of courseNode.groups) {
+          inner.append(buildGroupNode(group));
+        }
+        node.append(inner);
+      }
     }
     treeEl.append(node);
   }
@@ -707,6 +876,9 @@ async function init() {
     return;
   }
   for (const courseNode of tree.courses) {
+    if (courseNode.files && courseNode.files.length > 0) {
+      openKeys.add(`course-${courseNode.course}`);
+    }
     for (const group of courseNode.groups) {
       if (group.files.length > 0) {
         openKeys.add(`course-${courseNode.course}`);

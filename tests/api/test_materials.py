@@ -290,8 +290,10 @@ async def test_material_isolation_between_teachers(
     assert [g["id"] for g in c1["groups"]] == [g2]
     assert c1["groups"][0]["files"] == []
 
-    # Teacher 2 cannot access QR, replace, unlink, or delete Teacher 1's material -> 404
+    # Teacher 2 cannot access QR, preview, file, replace, unlink, or delete -> 404
     assert (await client.get(f"/api/materials/{mat_id}/qr.svg")).status_code == 404
+    assert (await client.get(f"/api/materials/{mat_id}/preview")).status_code == 404
+    assert (await client.get(f"/api/materials/{mat_id}/file")).status_code == 404
     assert (
         await client.put(
             f"/api/materials/{mat_id}/file",
@@ -598,12 +600,29 @@ async def test_materials_page_access_and_states(
 
     await _register(client)
 
-    # No groups yet: message with a link instead of the form and the tree
+    # No groups yet: upload form and tree are still available independently of groups
     no_groups = await client.get("/materials")
     assert no_groups.status_code == 200
-    assert 'href="/groups/new"' in no_groups.text
-    assert "data-upload-form" not in no_groups.text
-    assert "data-tree" not in no_groups.text
+    assert "data-upload-form" in no_groups.text
+    assert "data-tree" in no_groups.text
+    assert "/static/js/pages/materials.js" in no_groups.text
+
+    # Upload a material without any groups or Excel
+    r_up = await client.post(
+        "/api/materials",
+        files={"file": ("solo.pdf", _make_pdf_bytes("Solo"), "application/pdf")},
+        data={"course": "1"},
+    )
+    assert r_up.status_code == 200
+    solo_body = r_up.json()
+    assert solo_body["course"] == 1
+    assert solo_body["group_ids"] == []
+
+    r_tree = await client.get("/api/materials/tree")
+    assert r_tree.status_code == 200
+    c1 = next(c for c in r_tree.json()["courses"] if c["course"] == 1)
+    assert c1["groups"] == []
+    assert [f["id"] for f in c1["files"]] == [solo_body["id"]]
 
     await _create_group(client, "ИС-81", 1)
     with_groups = await client.get("/materials")
@@ -611,3 +630,68 @@ async def test_materials_page_access_and_states(
     assert "data-upload-form" in with_groups.text
     assert "data-tree" in with_groups.text
     assert "/static/js/pages/materials.js" in with_groups.text
+
+
+async def test_material_preview_and_xss_sanitization(
+    client: AsyncClient,
+) -> None:
+    # Unauthenticated requests are rejected
+    assert (await client.get("/api/materials/1/preview")).status_code == 401
+    assert (await client.get("/api/materials/1/file")).status_code == 401
+
+    await _register(client)
+
+    # Upload DOCX containing an XSS attempt in document text
+    docx_bytes = _make_docx_bytes(
+        "Тема 1 &lt;script&gt;alert(1)&lt;/script&gt;"
+    )
+    r_docx = await client.post(
+        "/api/materials",
+        files={
+            "file": (
+                "lecture.docx",
+                docx_bytes,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+        },
+        data={"course": "1"},
+    )
+    assert r_docx.status_code == 200
+    docx_id = r_docx.json()["id"]
+
+    r_prev_docx = await client.get(f"/api/materials/{docx_id}/preview")
+    assert r_prev_docx.status_code == 200
+    prev_docx = r_prev_docx.json()
+    assert prev_docx["mode"] == "docx"
+    assert "Тема 1" in prev_docx["html"]
+    assert "<script>" not in prev_docx["html"]
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in prev_docx["html"]
+
+    # Upload PDF -> mode == pdf and inline file serving
+    r_pdf = await client.post(
+        "/api/materials",
+        files={"file": ("slides.pdf", _make_pdf_bytes("Slides"), "application/pdf")},
+        data={"course": "1"},
+    )
+    pdf_id = r_pdf.json()["id"]
+    r_prev_pdf = await client.get(f"/api/materials/{pdf_id}/preview")
+    assert r_prev_pdf.status_code == 200
+    assert r_prev_pdf.json()["mode"] == "pdf"
+
+    r_inline = await client.get(f"/api/materials/{pdf_id}/file")
+    assert r_inline.status_code == 200
+    assert r_inline.headers["content-disposition"].startswith("inline;")
+
+    # Upload legacy DOC -> mode == unsupported, fallback download works
+    r_doc = await client.post(
+        "/api/materials",
+        files={"file": ("legacy.doc", _make_doc_bytes(), "application/msword")},
+        data={"course": "1"},
+    )
+    doc_id = r_doc.json()["id"]
+    r_prev_doc = await client.get(f"/api/materials/{doc_id}/preview")
+    assert r_prev_doc.status_code == 200
+    assert r_prev_doc.json()["mode"] == "unsupported"
+    r_dl_doc = await client.get(f"/api/materials/{doc_id}/file?download=1")
+    assert r_dl_doc.status_code == 200
+    assert r_dl_doc.headers["content-disposition"].startswith("attachment;")
