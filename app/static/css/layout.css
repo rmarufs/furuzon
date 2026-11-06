@@ -58,8 +58,10 @@
 }
 
 .brand__mark {
+  display: block;
   width: var(--size-logo-mark);
   height: var(--size-logo-mark);
+  object-fit: contain;
   flex: none;
 }
 
