@@ -184,13 +184,44 @@ function startCellEdit(td, student, colKey) {
   });
 }
 
+const NUMBER_COLUMN_TITLES = new Set(["номер", "№", "№ п/п", "п/п", "рақам"]);
+
+function findNumberColumnKey(columns) {
+  if (!Array.isArray(columns) || columns.length <= 1) {
+    return null;
+  }
+  for (const col of columns) {
+    const norm = String((col && col.title) || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/[.:]+$/, "");
+    if (NUMBER_COLUMN_TITLES.has(norm)) {
+      return col.key;
+    }
+  }
+  return null;
+}
+
 function buildStudentRow(student) {
   const tr = document.createElement("tr");
   tr.dataset.studentId = String(student.id);
 
+  const numberColKey = findNumberColumnKey(groupData.columns);
+  if (numberColKey !== null) {
+    tr.classList.add("student-row--numbered");
+  }
+  let titleAssigned = false;
+
   for (const col of groupData.columns) {
     const td = document.createElement("td");
     td.className = "student-cell";
+    if (col.key === numberColKey) {
+      td.classList.add("student-cell--number");
+    } else if (!titleAssigned) {
+      td.classList.add("student-cell--title");
+      titleAssigned = true;
+    }
     td.dataset.label = col.title;
     td.dataset.colKey = col.key;
     td.tabIndex = 0;

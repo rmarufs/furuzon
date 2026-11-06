@@ -535,3 +535,111 @@
     text-align: end;
   }
 }
+
+/* Student cards (phones only): header with number badge and menu, title, wrapping tiles */
+@media (max-width: 767px) {
+  .students-table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .students-table tbody tr > .student-cell,
+  .students-table tbody tr > .student-cell:first-child {
+    flex: 0 1 auto;
+    max-width: 100%;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .student-cell__value--empty {
+    color: var(--color-text-muted);
+  }
+
+  .students-table tbody tr > .student-cell:hover,
+  .students-table tbody tr > .student-cell:active {
+    background: var(--color-primary-soft);
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--title {
+    order: -1;
+    flex: 1 1 100%;
+    padding: var(--space-1) 0;
+    background: transparent;
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--title:hover,
+  .students-table tbody tr > .student-cell.student-cell--title:active {
+    background: transparent;
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--title .student-cell__value {
+    font-size: var(--font-size-title-card);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .students-table tbody tr:not(.student-row--numbered) > .student-cell.student-cell--title {
+    padding-inline-end: calc(var(--size-tap) + var(--space-2));
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--number,
+  .students-table tbody tr > .student-cell.student-cell--number:hover,
+  .students-table tbody tr > .student-cell.student-cell--number:active {
+    order: -2;
+    max-width: calc(100% - var(--size-tap) - var(--space-2));
+    padding: 0;
+    background: transparent;
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--number::before {
+    display: none;
+  }
+
+  .student-cell--number .student-cell__value {
+    display: inline-flex;
+    align-items: center;
+    min-height: 0;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: var(--color-primary-soft);
+    color: var(--color-link);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .student-cell--number:hover .student-cell__value,
+  .student-cell--number:active .student-cell__value {
+    background: var(--color-primary-soft-strong);
+  }
+
+  .student-cell--number .student-cell__value::before {
+    content: "№\00a0";
+  }
+
+  .students-table tbody tr > .student-cell[data-editing="true"] {
+    flex: 1 1 100%;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-primary-soft);
+    cursor: default;
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--number[data-editing="true"]::before {
+    display: block;
+  }
+
+  .students-table tbody tr > .student-cell.student-cell--number[data-editing="true"],
+  .students-table tbody tr:not(.student-row--numbered) > .student-cell.student-cell--title[data-editing="true"] {
+    flex-basis: calc(100% - var(--size-tap) - var(--space-2));
+    max-width: calc(100% - var(--size-tap) - var(--space-2));
+    margin-inline-end: calc(var(--size-tap) + var(--space-2));
+    padding-inline-end: var(--space-3);
+  }
+
+  .student-actions-cell {
+    top: var(--space-4);
+    inset-inline-end: var(--space-4);
+  }
+}
