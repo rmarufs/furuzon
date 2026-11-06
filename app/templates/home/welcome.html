@@ -6,8 +6,8 @@
       <p class="home-welcome__subtitle">{{ t('home.subtitle') }}</p>
     </div>
     <div class="home-welcome__actions">
-      <a class="btn btn--primary" href="/groups/new">
-        {{ icon('plus') }}<span>{{ t('home.create_first_group') }}</span>
+      <a class="btn btn--primary" href="/groups/new" data-home-create-group>
+        {{ icon('plus') }}<span data-home-create-group-label>{{ t('home.create_first_group') }}</span>
       </a>
     </div>
   </div>
