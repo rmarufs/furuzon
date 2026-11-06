@@ -60,6 +60,8 @@
   "errors.student_empty": "Заполните хотя бы одно поле студента.",
   "errors.cannot_delete_last_column": "Нельзя удалить последнюю колонку таблицы.",
   "errors.column_not_found": "Колонка не найдена.",
+  "errors.too_many_requests": "Слишком много попыток. Подождите немного и попробуйте снова.",
+  "errors.csrf_failed": "Запрос отклонён из соображений безопасности. Обновите страницу.",
   "errors.unknown": "Не удалось выполнить действие.",
 
   "mail.reset.subject": "Сброс пароля — Furuzon",

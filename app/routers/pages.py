@@ -256,6 +256,14 @@ async def ui_showcase(
     user: Annotated[User | None, Depends(get_current_user_optional)],
 ) -> HTMLResponse:
     templates = request.app.state.templates
+    app_settings = getattr(request.app.state, "settings", settings)
+    if app_settings.ENV == "prod" or settings.ENV == "prod":
+        return templates.TemplateResponse(
+            request,
+            "errors/404.html",
+            base_context(request, user=user),
+            status_code=404,
+        )
     return templates.TemplateResponse(
         request,
         "ui.html",

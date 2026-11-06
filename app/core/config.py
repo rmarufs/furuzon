@@ -3,6 +3,9 @@ from typing import Any, Literal, Self
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+DEFAULT_SECRET_KEY = "dev-secret-key-change-in-production"
+MIN_PROD_SECRET_KEY_LEN = 32
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -11,9 +14,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    ENV: Literal["dev", "prod"] = "dev"
     DATABASE_URL: str = "postgresql+asyncpg://localhost:5432/furuzon"
     TEST_DATABASE_URL: str = "postgresql+asyncpg://localhost:5432/furuzon_test"
-    SECRET_KEY: str = "dev-secret-key-change-in-production"
+    SECRET_KEY: str = DEFAULT_SECRET_KEY
     COOKIE_SECURE: bool = False
     SESSION_MAX_AGE_DAYS: int = 30
     PUBLIC_BASE_URL: str = "http://localhost:8000"
@@ -37,6 +41,20 @@ class Settings(BaseSettings):
         if value == "" or value is None:
             return 587
         return value
+
+    @model_validator(mode="after")
+    def validate_production_settings(self) -> Self:
+        if self.ENV == "prod":
+            if (
+                self.SECRET_KEY == DEFAULT_SECRET_KEY
+                or len(self.SECRET_KEY.strip()) < MIN_PROD_SECRET_KEY_LEN
+            ):
+                raise ValueError(
+                    "ENV=prod requires a non-default SECRET_KEY of at least 32 characters"
+                )
+            if not self.COOKIE_SECURE:
+                raise ValueError("ENV=prod requires COOKIE_SECURE=true")
+        return self
 
     @model_validator(mode="after")
     def validate_storage_settings(self) -> Self:

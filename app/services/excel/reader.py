@@ -199,6 +199,8 @@ def _read_xls(data: bytes) -> ParsedSheet:
     for sheet in workbook.sheets():
         if sheet.nrows == 0 or sheet.ncols == 0:
             continue
+        if sheet.ncols > MAX_RAW_SCAN_COLUMNS:
+            raise AppError("excel_too_large", status_code=422)
         raw_rows: list[list[str]] = []
         for row_idx in range(sheet.nrows):
             if row_idx >= MAX_RAW_SCAN_ROWS:

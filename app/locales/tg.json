@@ -60,6 +60,8 @@
   "errors.student_empty": "Ҳадди ақал як майдони донишҷӯро пур кунед.",
   "errors.cannot_delete_last_column": "Сутуни охирини ҷадвалро нест кардан мумкин нест.",
   "errors.column_not_found": "Сутун ёфт нашуд.",
+  "errors.too_many_requests": "Кӯшишҳо аз ҳад зиёданд. Каме интизор шавед ва дубора кӯшиш кунед.",
+  "errors.csrf_failed": "Дархост бо сабабҳои амниятӣ рад карда шуд. Саҳифаро нав кунед.",
   "errors.unknown": "Иҷрои амал муяссар нашуд.",
 
   "mail.reset.subject": "Барқароркунии парол — Furuzon",

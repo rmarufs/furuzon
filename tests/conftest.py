@@ -14,6 +14,7 @@ import app.models  # noqa: F401
 from app.core.config import settings
 from app.core.database import Base, get_session
 from app.main import app
+from app.routers.auth import rate_limiter
 from app.storage import Storage, get_storage
 
 
@@ -34,6 +35,11 @@ class FakeStorage(Storage):
 
     async def exists(self, key: str) -> bool:
         return key in self.files
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiter() -> None:
+    rate_limiter.clear()
 
 
 @pytest.fixture
